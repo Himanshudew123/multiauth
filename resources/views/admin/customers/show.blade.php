@@ -18,6 +18,7 @@
                     <!-- Profile Photo -->
                     <div class="col-md-4 text-center mb-4 mb-md-0">
                         @if($customer->photo)
+                        
                             <img src="{{ asset('storage/' . $customer->photo) }}" 
                                  alt="Profile Photo" 
                                  class="img-fluid rounded-circle shadow-sm"

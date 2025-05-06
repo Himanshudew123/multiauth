@@ -34,7 +34,7 @@
             <!-- Phone Number -->
             <div class="col-md-6">
                 <label for="number" class="form-label">Phone Number:</label>
-                <input type="text" name="number" class="form-control" id="number">
+                <input  maxlength="10" type="text" name="number" class="form-control" id="number">
                 <div id="phoneError" class="text-danger small d-none">Phone number is required.</div>
             </div>
 

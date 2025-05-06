@@ -1,0 +1,11 @@
+
+remove secret key
+
+input validation for special charactor
+
+log out
+
+encrypertion url search
+
+
+

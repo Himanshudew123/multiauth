@@ -1,112 +1,70 @@
 <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
-        <!--begin::Sidebar Brand-->
-        <div class="sidebar-brand">
-          <!--begin::Brand Link-->
-          <a href="{{ route("admin.dashboard") }}" class="brand-link">
-            <!--begin::Brand Image-->
-          
-            <img
-              src="{{ asset('assets/img/AdminLTELogo.png') }}"
-              alt="AdminLTE Logo"
-              class="brand-image opacity-75 shadow"
-            />
-            <!--end::Brand Image-->
-            <!--begin::Brand Text-->
-            <span class="brand-text fw-light">E-COM</span>
-            <!--end::Brand Text-->
+  <!-- Sidebar Brand -->
+  <div class="sidebar-brand">
+    <a href="{{ route('admin.dashboard') }}" class="brand-link d-flex align-items-center">
+      <img src="{{ asset('assets/img/AdminLTELogo.png') }}" alt="Logo" class="brand-image opacity-75 shadow me-2" />
+      <span class="brand-text fw-light">E-COM</span>
+    </a>
+  </div>
+
+  <!-- Sidebar Menu -->
+  <div class="sidebar-wrapper">
+    <nav class="mt-2">
+      <ul class="nav flex-column sidebar-menu" data-lte-toggle="treeview" role="menu" data-accordion="false">
+
+        <!-- Dashboard -->
+        <li class="nav-item">
+          <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+            <i class="nav-icon bi bi-speedometer"></i>
+            <p>Dashboard</p>
           </a>
-          <!--end::Brand Link-->
-        </div>
-        <!--end::Sidebar Brand-->
-        <!--begin::Sidebar Wrapper-->
-        <div class="sidebar-wrapper">
-          <nav class="mt-2">
-            <!--begin::Sidebar Menu-->
-            <ul
-              class="nav sidebar-menu flex-column"
-              data-lte-toggle="treeview"
-              role="menu"
-              data-accordion="false"
-            >
-       
-              
-             
-            
-              <li class="nav-item menu-open">
-                <a href="{{ route("admin.dashboard") }}" class="nav-link active">
-                  <i class="nav-icon bi bi-speedometer"></i>
-                  <p>
-                    Dashboard
-                  </p>
-                </a>
-             
-              </li>
+        </li>
+
+        <!-- Manage Users -->
+        <li class="nav-item">
+          <a href="{{ route('admin.customers.index') }}" class="nav-link {{ request()->routeIs('admin.customers.*') ? 'active' : '' }}">
+            <i class="nav-icon bi bi-people-fill"></i>
+            <p>Manage Users</p>
+          </a>
+        </li>
+
+        <!-- Manage Products -->
+        <li class="nav-item">
+          <a href="{{ route('admin.products.index') }}" class="nav-link {{ request()->routeIs('admin.prducts.*') ? 'active' : '' }}">
+            <i class="nav-icon bi bi-tags-fill"></i>
+            <p>Manage Products</p>
+          </a>
+        </li>
+
+        <!-- Manage Category -->
+        <li class="nav-item">
+          <a href="{{ route('admin.categories.index') }}" class="nav-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
+            <i class="nav-icon bi bi-tags-fill"></i>
+            <p>Manage Categories</p>
+          </a>
+        </li>
 
 
+        <!-- Tags -->
+        <li class="nav-item">
+          <a href="{{ route('admin.tags.index') }}" class="nav-link {{ request()->routeIs('admin.tags.*') ? 'active' : '' }}">
+            <i class="nav-icon bi bi-tags-fill"></i>
+            <p>Manage Tags</p>
+          </a>
+        </li>
 
+        <!-- Logout -->
+        <li class="nav-item ">
+          <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit" class="nav-link btn btn-link text-start w-100 text-white">
+              <i class="bi bi-box-arrow-right nav-icon"></i>
+              <p>Log Out</p>
+            </button>
+          </form>
+        </li>
 
-             
-              <li class="nav-item">
-                <a href="{{ route('admin.customers.index') }}" class="nav-link">
-                  <i class="nav-icon bi bi-people-fill"></i>
-                  
-                  <p>Manage User</p>
-                  <i class="nav-arrow bi bi-chevron-right"></i>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="#" class="nav-link">
-                  <i class="nav-icon bi bi-box-seam-fill"></i>
-                  <p>
-                    Manage Products
-                    <i class="nav-arrow bi bi-chevron-right"></i>
-                  </p>
-                </a>
-                <ul class="nav nav-treeview">
-                  <li class="nav-item">
-                    <a href="add_product.php" class="nav-link">
-                      <i class="nav-icon bi bi-circle"></i>
-                      <p>Add Product</p>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="view_product.php" class="nav-link">
-                      <i class="nav-icon bi bi-circle"></i>
-                      <p>View Products</p>
-                    </a>
-                  </li>
-                 
-                </ul>
-              </li>
-              <li class="nav-item">
-                <a href="category.php" class="nav-link">
-                  <i class="nav-icon bi bi-box-seam-fill"></i>
-                  <p>
-                    Manage Category
-                    <i class="nav-arrow bi bi-chevron-right"></i>
-                  </p>
-                </a>
-               
-              </li>
-
-          
-              
-             
-              
-              <li class="nav-item">
-                <a href="./logout.php" class="nav-link">
-                  <i class="nav-icon bi bi-box-arrow-in-right"></i>
-                  <p>
-                    Logout
-                   
-                  </p>
-                </a>
-               
-              </li>
-              
-            </ul>
-            <!--end::Sidebar Menu-->
-          </nav>
-        </div>
-        <!--end::Sidebar Wrapper-->
-      </aside>
+      </ul>
+    </nav>
+  </div>
+</aside>

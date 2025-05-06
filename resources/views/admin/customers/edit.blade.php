@@ -28,7 +28,7 @@
             <!-- Phone -->
             <div class="col-md-6">
                 <label for="number" class="form-label">Phone Number:</label>
-                <input value="{{ $customer->number }}" type="text" name="number" class="form-control" id="number">
+                <input maxlength="10" value="{{ $customer->number }}" type="text" name="number" class="form-control" id="number">
                 <div id="phoneError" class="text-danger small d-none">Phone number is required.</div>
             </div>
 
@@ -46,7 +46,7 @@
             <!-- Password -->
             <div class="col-md-6">
                 <label for="password" class="form-label">Password:</label>
-                <input type="password" name="password" class="form-control" id="password" placeholder="Leave empty to keep current password">
+                <input type="password" name="password" class="form-control" id="password" placeholder="Leave blank to keep current password">
                 <div id="passwordError" class="text-danger small d-none">Password must be at least 6 characters.</div>
             </div>
 
@@ -61,11 +61,11 @@
                 <label for="photo" class="form-label">Photo (Max 1MB):</label>
                 <div class="input-group">
                     <input type="file" name="photo" class="form-control" id="photoInput" accept="image/*">
-                    <button type="button" class="btn btn-outline-danger" id="removePhotoBtn" style="display: none;" onclick="removePhoto()">Remove</button>
+                    <button type="button" class="btn btn-outline-danger" id="removePhotoBtn" style="display:none;" onclick="removePhoto()">Remove</button>
 
                     @if($customer->photo)
                         <input type="hidden" name="remove_existing_photo" id="removeExistingPhoto" value="0">
-                        <button type="button" class="btn btn-outline-warning ms-2" id="removeExistingPhotoBtn" onclick="markRemoveExistingPhoto()">Remove Existing Photo</button>
+                        <button type="button" class="btn btn-outline-warning ms-2" id="removeExistingPhotoBtn" onclick="markRemoveExistingPhoto()">Remove Existing</button>
                         <button type="button" class="btn btn-outline-primary ms-2" id="previewPhotoBtn" onclick="previewPhoto('{{ asset('storage/' . $customer->photo) }}')">Preview</button>
                     @endif
                 </div>
@@ -82,7 +82,7 @@
     </form>
 </div>
 
-<!-- Image Preview Modal -->
+<!-- Modal for Image Preview -->
 <div class="modal fade" id="photoPreviewModal" tabindex="-1" aria-labelledby="photoPreviewModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content">
@@ -110,19 +110,21 @@
 
     function validateForm() {
         let valid = true;
-
-        const fields = [
+        const requiredFields = [
             { id: 'name', error: 'nameError' },
             { id: 'email', error: 'emailError' },
             { id: 'number', error: 'phoneError' },
             { id: 'gender', error: 'genderError' }
         ];
 
-        fields.forEach(({id, error}) => {
-            const input = $('#' + id).val().trim();
-            const showError = input === '';
-            $('#' + error).toggleClass('d-none', !showError);
-            if (showError) valid = false;
+        requiredFields.forEach(({ id, error }) => {
+            const val = $(`#${id}`).val().trim();
+            if (!val) {
+                $(`#${error}`).removeClass('d-none');
+                valid = false;
+            } else {
+                $(`#${error}`).addClass('d-none');
+            }
         });
 
         const password = $('#password').val().trim();
@@ -154,14 +156,14 @@
     function markRemoveExistingPhoto() {
         $('#removeExistingPhoto').val("1");
         $('#removeExistingPhotoBtn, #previewPhotoBtn').hide();
-        Swal.fire('Marked for Deletion', 'Existing photo will be removed upon update.', 'info');
+        Swal.fire('Marked', 'Photo will be removed after update.', 'info');
     }
 
     $('#photoInput').on('change', function () {
         const file = this.files[0];
         if (file && file.size > 1024 * 1024) {
             $('#photoError').removeClass('d-none');
-            $(this).val(''); 
+            $(this).val('');
             $('#removePhotoBtn').hide();
         } else {
             $('#photoError').addClass('d-none');
@@ -184,34 +186,46 @@
             }
         });
 
-        const encryptedData = encryptData(plainData);
-        const ajaxFormData = new FormData();
-        ajaxFormData.append('payload', encryptedData);
-        ajaxFormData.append('_token', formData.get('_token'));
-        ajaxFormData.append('_method', 'PATCH');
+        const encryptedPayload = encryptData(plainData);
+        const finalFormData = new FormData();
+        finalFormData.append('payload', encryptedPayload);
+        finalFormData.append('_token', formData.get('_token'));
+        finalFormData.append('_method', 'PATCH');
 
-        const photoFile = $('#photoInput')[0].files[0];
-        if (photoFile) {
-            ajaxFormData.append('photo', photoFile);
-        }
+        const photo = $('#photoInput')[0].files[0];
+        if (photo) finalFormData.append('photo', photo);
 
-        const removeExisting = $('#removeExistingPhoto').val();
-        if (removeExisting === '1') {
-            ajaxFormData.append('remove_existing_photo', '1');
+        if ($('#removeExistingPhoto').val() === '1') {
+            finalFormData.append('remove_existing_photo', '1');
         }
 
         $.ajax({
             url: "{{ route('admin.customers.update', $customer->uuid) }}",
             method: 'POST',
-            data: ajaxFormData,
+            data: finalFormData,
             contentType: false,
             processData: false,
-            success: function (response) {
-                Swal.fire('Updated!', response.message || 'Customer updated successfully.', 'success')
+            success: function (res) {
+                Swal.fire('Success', res.message || 'Customer updated.', 'success')
                     .then(() => window.location.href = "{{ route('admin.customers.index') }}");
             },
             error: function (xhr) {
-                Swal.fire('Error', xhr.responseJSON?.message || 'An error occurred.', 'error');
+                let errorMessages = [];
+                const errors = xhr.responseJSON.field_errors;
+                
+                for (let field in errors) {
+                    const errorId = `#${field}Error`;
+                    if ($(errorId).length) {
+                        $(errorId).text(errors[field][0]).removeClass('d-none');
+                        errorMessages.push(`${field}: ${errors[field][0]}`);
+                    }
+                }
+                
+                if (errorMessages.length) {
+                    Swal.fire('Validation Error', errorMessages.join('<br>'), 'warning');
+                } else {
+                    Swal.fire('Validation Error', 'Please correct the highlighted fields.', 'warning');
+                }
             }
         });
     });

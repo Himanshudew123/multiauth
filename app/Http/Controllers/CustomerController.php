@@ -1,16 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\Validator;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class CustomerController extends Controller
 {
-
-
-
 
     public function index(Request $request)
     {
@@ -40,57 +37,91 @@ class CustomerController extends Controller
 
 
     public function store(Request $request)
-    {
-        // dd($request);
+{
+    try {
         $encryptedPayload = decryptAES($request->input('payload'));
+        $data = json_decode($encryptedPayload, true);
 
-        try {
-            // Decrypt the encrypted data
-
-            $data = json_decode($encryptedPayload, true);
-
-
-
-            if (!$data) {
-                return response()->json(['success' => false, 'message' => 'Decryption failed: Invalid data.']);
-            }
-
-            // Ensure all required fields are present
-            $requiredFields = ['name', 'email', 'password', 'number', 'gender', 'bio'];
-            foreach ($requiredFields as $field) {
-                if (!isset($data[$field])) {
-                    return response()->json(['success' => false, 'message' => 'Missing field: ' . $field]);
-                }
-            }
-
-            $name = $data['name'];
-            $email = $data['email'];
-            $password = bcrypt($data['password']);
-            $number = $data['number'];
-            $gender = $data['gender'];
-            $bio = $data['bio'];
-
-            $photoPath = null;
-            if ($request->hasFile('photo')) {
-                $photoPath = $request->file('photo')->store('photos', 'public');
-            }
-
-            // Create the customer record
-            Customer::create([
-                'name' => $name,
-                'email' => $email,
-                'password' => $password,
-                'number' => $number,
-                'gender' => $gender,
-                'bio' => $bio,
-                'photo' => $photoPath,
-            ]);
-
-            return response()->json(['success' => true, 'message' => 'Customer created successfully!']);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => 'Decryption failed: ' . $e->getMessage()]);
+        if (!$data) {
+            return response()->json(['success' => false, 'message' => 'Decryption failed: Invalid data.']);
         }
+
+        // Validate required fields
+        $requiredFields = ['name', 'email', 'password', 'number', 'gender', 'bio'];
+        foreach ($requiredFields as $field) {
+            if (!isset($data[$field]) || trim($data[$field]) === '') {
+                return response()->json(['success' => false, 'message' => "Missing or empty field: $field"]);
+            }
+        }
+
+        // Custom validation rules
+        $errors = [];
+
+        // Name: no numbers or special characters
+        if (!preg_match("/^[a-zA-Z\s]+$/", $data['name'])) {
+            $errors[] = 'Name should contain only letters and spaces.';
+        }
+
+        // Email format
+        if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+            $errors[] = 'Invalid email format.';
+        }
+
+        // Password length
+        if (strlen($data['password']) < 8) {
+            $errors[] = 'Password must be at least 8 characters.';
+        }
+
+        // Number: only digits
+        if (!preg_match("/^\d+$/", $data['number'])) {
+            $errors[] = 'Phone number must contain only digits.';
+        }
+
+        // Gender: must be Male or Female
+        if (!in_array($data['gender'], ['Male', 'Female'])) {
+            $errors[] = 'Gender must be Male or Female.';
+        }
+
+        if (!empty($errors)) {
+            return response()->json(['success' => false, 'message' => $errors]);
+        }
+
+        // Prepare validated data
+        $name = $data['name'];
+        $email = $data['email'];
+        $password = bcrypt($data['password']);
+        $number = $data['number'];
+        $gender = $data['gender'];
+        $bio = $data['bio'];
+
+        // Handle photo upload
+        $photoPath = null;
+        if ($request->hasFile('photo')) {
+            $photo = $request->file('photo');
+            if ($photo->getSize() > 1024 * 1024) {
+                return response()->json(['success' => false, 'message' => 'Photo must be less than 1MB.']);
+            }
+            $photoPath = $photo->store('photos', 'public');
+        }
+
+        // Save customer
+        Customer::create([
+            'name' => $name,
+            'email' => $email,
+            'password' => $password,
+            'number' => $number,
+            'gender' => $gender,
+            'bio' => $bio,
+            'photo' => $photoPath,
+        ]);
+
+        return response()->json(['success' => true, 'message' => 'Customer created successfully!']);
+
+    } catch (\Exception $e) {
+        return response()->json(['success' => false, 'message' => 'Decryption or processing failed: ' . $e->getMessage()]);
     }
+}
+
 
     public function show(string $uuid)
     {
@@ -106,68 +137,71 @@ class CustomerController extends Controller
 
     public function update(Request $request, string $uuid)
     {
-        $encryptedPayload = decryptAES($request->input('payload'));
-        
         try {
-            // Decrypt the encrypted data
+            $encryptedPayload = decryptAES($request->input('payload'));
             $data = json_decode($encryptedPayload, true);
     
             if (!$data) {
                 return response()->json(['success' => false, 'message' => 'Decryption failed: Invalid data.']);
             }
     
-            // Ensure all required fields are present
-            $requiredFields = ['name', 'email', 'password', 'number', 'gender', 'bio'];
-            foreach ($requiredFields as $field) {
-                if (!isset($data[$field])) {
-                    return response()->json(['success' => false, 'message' => 'Missing field: ' . $field]);
-                }
+            // Validation
+            $validator = Validator::make($data, [
+                'name'     => ['required', 'regex:/^[a-zA-Z\s]+$/'],
+                'email'    => ['required', 'email'],
+                'password' => ['nullable', 'min:6'],
+                'number'   => ['required', 'digits_between:10,15'],
+                'gender'   => ['required', 'in:Male,Female'],
+                'bio'      => ['required', 'string'],
+            ]);
+    
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'field_errors' => $validator->errors(), // return field-wise errors
+                    'message' => 'Validation failed.'
+                ], 422);
             }
     
-            // Find the customer by UUID
             $customer = Customer::where('uuid', $uuid)->first();
     
             if (!$customer) {
                 return response()->json(['success' => false, 'message' => 'Customer not found.']);
             }
     
-            // Check if password is being updated and hash it
-            $password = isset($data['password']) && !empty($data['password']) ? bcrypt($data['password']) : $customer->password;
+            $password = !empty($data['password']) ? bcrypt($data['password']) : $customer->password;
     
-            // Check if the photo is being updated, otherwise retain the existing photo
             $photoPath = $customer->photo;
             if ($request->hasFile('photo') || $request->input('remove_existing_photo') === '1') {
-                // Remove the existing photo if marked
                 if ($request->input('remove_existing_photo') === '1' && $photoPath) {
                     Storage::disk('public')->delete($photoPath);
-                    $photoPath = null; // Clear the photo path
+                    $photoPath = null;
                 }
     
-                // If a new photo is uploaded
                 if ($request->hasFile('photo')) {
+                    if ($request->file('photo')->getSize() > 1024 * 1024) {
+                        return response()->json(['success' => false, 'message' => 'Photo must be less than 1MB.']);
+                    }
                     $photoPath = $request->file('photo')->store('photos', 'public');
                 }
             }
     
-            // Update the customer record
             $customer->update([
-                'name' => $data['name'],
-                'email' => $data['email'],
+                'name'     => $data['name'],
+                'email'    => $data['email'],
                 'password' => $password,
-                'number' => $data['number'],
-                'gender' => $data['gender'],
-                'bio' => $data['bio'],
-                'photo' => $photoPath,
+                'number'   => $data['number'],
+                'gender'   => $data['gender'],
+                'bio'      => $data['bio'],
+                'photo'    => $photoPath,
             ]);
     
             return response()->json(['success' => true, 'message' => 'Customer updated successfully!']);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => 'Decryption failed: ' . $e->getMessage()]);
+            return response()->json(['success' => false, 'message' => 'Update failed: ' . $e->getMessage()]);
         }
     }
     
-
-
 
 
     public function destroy(string $uuid)

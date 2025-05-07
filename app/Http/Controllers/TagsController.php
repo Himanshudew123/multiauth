@@ -7,35 +7,42 @@ use Illuminate\Http\Request;
 class TagsController extends Controller
 {
     public function index(Request $request)
-{
-    // 1. Validate that 'name' is either empty or:
-    //    • a string
-    //    • at least 3 characters
-    //    • contains only letters and spaces
-    $validated = $request->validate([
-        'name' => [
-            'nullable',
-            'string',
-            'min:3',
-            'regex:/^[A-Za-z\s]+$/'
-        ],
-    ], [
-        'name.regex' => 'The name may only contain letters and spaces.',
-    ]);
-
-    // 2. Build the Tag query
-    $query = Tag::query();
-
-    // 3. Apply the name filter only when validation passed
-    if (!empty($validated['name'])) {
-        $query->where('name', 'like', '%' . $validated['name'] . '%');
+    {
+        // 1. Validate inputs
+        $validated = $request->validate([
+            'name'       => ['nullable','string','min:3','regex:/^[A-Za-z\s]+$/'],
+            'start_date' => ['nullable','date'],
+            'end_date'   => ['nullable','date'],
+        ], [
+            'name.regex' => 'The name may only contain letters and spaces.',
+        ]);
+    
+        // 2. Build base query
+        $query = Tag::query();
+    
+        // 3. Name filter
+        if (!empty($validated['name'])) {
+            $query->where('name', 'like', '%' . $validated['name'] . '%');
+        }
+    
+        // 4. Date range filter
+        if (!empty($validated['start_date']) && !empty($validated['end_date'])) {
+            $query->whereBetween('created_at', [
+                $validated['start_date'],
+                $validated['end_date'] . ' 23:59:59'
+            ]);
+        } elseif (!empty($validated['start_date'])) {
+            $query->whereDate('created_at', '>=', $validated['start_date']);
+        } elseif (!empty($validated['end_date'])) {
+            $query->whereDate('created_at', '<=', $validated['end_date']);
+        }
+    
+        // 5. Paginate
+        $tags = $query->latest()->paginate(5);
+    
+        return view('admin.tags.index', compact('tags'));
     }
-
-    // 4. Paginate and pass to the view
-    $tags = $query->latest()->paginate(5);
-
-    return view('admin.tags.index', compact('tags'));
-}
+    
 
     public function create()
     {

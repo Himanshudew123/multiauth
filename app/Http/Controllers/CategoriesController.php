@@ -7,29 +7,40 @@ use Illuminate\Http\Request;
 class CategoriesController extends Controller
 {
     public function index(Request $request)
-{
-    // 1. Validate that 'name' is at least 3 characters if present
-    $validated = $request->validate([
-        'name' => [
-            'nullable',
-            'string',
-            'min:3',
-            'regex:/^[A-Za-z\s]+$/'
-        ],
-    ]);
+    {
+        // 1. Validate inputs: name (min 3, letters/spaces), dates
+        $validated = $request->validate([
+            'name'        => ['nullable','string','min:3','regex:/^[A-Za-z\s]+$/'],
+            'start_date'  => ['nullable','date'],
+            'end_date'    => ['nullable','date'],
+        ], [
+            'name.regex'  => 'The name may only contain letters and spaces.',
+        ]);
 
-    // 2. Build the query
-    $query = Category::query();
+        // 2. Build the query
+        $query = Category::query();
 
-    // 3. Apply the name filter only when it passes validation (i.e. 3+ chars)
-    if (!empty($validated['name'])) {
-        $query->where('name', 'like', '%' . $validated['name'] . '%');
+        // 3. Apply name filter
+        if (!empty($validated['name'])) {
+            $query->where('name', 'like', '%' . $validated['name'] . '%');
+        }
+
+        // 4. Apply date range filter
+        if (!empty($validated['start_date']) && !empty($validated['end_date'])) {
+            $query->whereBetween('created_at', [
+                $validated['start_date'],
+                $validated['end_date'] . ' 23:59:59'
+            ]);
+        } elseif (!empty($validated['start_date'])) {
+            $query->whereDate('created_at', '>=', $validated['start_date']);
+        } elseif (!empty($validated['end_date'])) {
+            $query->whereDate('created_at', '<=', $validated['end_date']);
+        }
+
+        // 5. Paginate and return
+        $categories = $query->latest()->paginate(5);
+        return view('admin.categories.index', compact('categories'));
     }
-
-    // 4. Paginate and return
-    $categories = $query->latest()->paginate(5);
-    return view('admin.categories.index', compact('categories'));
-}
 
 
     public function create()

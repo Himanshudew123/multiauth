@@ -9,13 +9,51 @@
         @endif
 
         <div class="mb-3 d-flex justify-content-between align-items-center">
-            <form method="POST" class="d-flex align-items-center">
-                @csrf
-                <input type="text" name="name" value="{{ request('name') }}" placeholder="Search by name"
-                    class="form-control me-2" style="width: 250px;">
+        <form method="POST" action="{{ route('admin.tags.index') }}" class="row g-2 align-items-end">
+            @csrf
+
+            <div class="col-auto">
+                <label for="name" class="form-label">Name</label>
+                <input type="text"
+                       name="name"
+                       id="name"
+                       value="{{ old('name', request('name')) }}"
+                       placeholder="Search by name (3+ letters)"
+                       class="form-control">
+                @error('name')
+                    <small class="text-danger">{{ $message }}</small>
+                @enderror
+            </div>
+
+            <div class="col-auto">
+                <label for="start_date" class="form-label">Start Date</label>
+                <input type="date"
+                       name="start_date"
+                       id="start_date"
+                       value="{{ request('start_date') }}"
+                       class="form-control">
+                @error('start_date')
+                    <small class="text-danger">{{ $message }}</small>
+                @enderror
+            </div>
+
+            <div class="col-auto">
+                <label for="end_date" class="form-label">End Date</label>
+                <input type="date"
+                       name="end_date"
+                       id="end_date"
+                       value="{{ request('end_date') }}"
+                       class="form-control">
+                @error('end_date')
+                    <small class="text-danger">{{ $message }}</small>
+                @enderror
+            </div>
+
+            <div class="col-auto d-flex gap-2">
                 <button type="submit" class="btn btn-primary">Search</button>
-                <a href="{{ route('admin.tags.index') }}" class="btn btn-secondary mx-2">Reset</a>
-            </form>
+                <a href="{{ route('admin.tags.index') }}" class="btn btn-secondary">Reset</a>
+            </div>
+        </form>
             <a href="{{ route('admin.tags.create') }}" class="btn btn-success"><i class="fa-solid fa-plus"></i> Create Tag</a>
         </div>
 

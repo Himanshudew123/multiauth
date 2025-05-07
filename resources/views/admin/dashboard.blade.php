@@ -20,39 +20,36 @@
       <!-- Info boxes -->
       <div class="row">
       <a class="col-12 col-sm-6 col-md-3" href="{{ route('admin.tags.index') }}">
-      <div >
-        <div class="info-box">
-        <span class="info-box-icon text-bg-primary shadow-sm">
-          <i class="bi bi-gear-fill"></i>
-        </span>
-        <div class="info-box-content">
-          <span class="info-box-text">Tags</span>
-          <span class="info-box-number">
-          {{ $tagCount }}
+  <div class="info-box mb-3">
+    <!-- Use bg-primary for a solid background and elevation-1 for a slight shadow -->
+    <span class="info-box-icon bg-primary elevation-1">
+      <!-- Switched to the “tags” icon and bumped its font-size -->
+      <i class="bi bi-tags fs-1 text-white"></i>
+    </span>
 
-          </span>
-        </div>
-        <!-- /.info-box-content -->
-        </div>
-        <!-- /.info-box -->
-      </div>
-      </a>
+    <div class="info-box-content">
+      <span class="info-box-text">Tags</span>
+      <span class="info-box-number">{{ $tagCount }}</span>
+    </div>
+    <!-- /.info-box-content -->
+  </div>
+  <!-- /.info-box -->
+</a>
+
       <!-- /.col -->
       <a class="col-12 col-sm-6 col-md-3" href="{{ route('admin.categories.index') }}">
-        <div>
-        <div class="info-box">
-          <span class="info-box-icon text-bg-danger shadow-sm">
-          <i class="bi bi-hand-thumbs-up-fill"></i>
-          </span>
-          <div class="info-box-content">
-          <span class="info-box-text">Categorys</span>
-          <span class="info-box-number">{{ $categoryCount }}</span>
-          </div>
-          <!-- /.info-box-content -->
-        </div>
-        <!-- /.info-box -->
-        </div>
-      </a>
+  <div class="info-box mb-3">
+    <span class="info-box-icon bg-danger elevation-1">
+      <!-- Made the icon larger and white for contrast -->
+      <i class="bi bi-folder-fill fs-1 text-white"></i>
+    </span>
+    <div class="info-box-content">
+      <span class="info-box-text">Categories</span>
+      <span class="info-box-number">{{ $categoryCount }}</span>
+    </div>
+  </div>
+</a>
+
       <!-- /.col -->
       <!-- fix for small devices only -->
       <!-- <div class="clearfix hidden-md-up"></div> -->

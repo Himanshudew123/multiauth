@@ -20,23 +20,24 @@ class HomeController extends Controller
         $tagCount = Tag::count();
         $categoryCount = Category::count();
         $customerCount = Customer::count();
-
-        // Get the latest records
-        $latestProduct = Product::latest()->first();  // Fetch the most recent product
-        $latestCategory = Category::latest()->first();  // Fetch the most recent category
-        $latestTag = Tag::latest()->first();  // Fetch the most recent tag
-        $latestCustomer = Customer::latest()->first();  // Fetch the most recent customer
-
+    
+        // Get the latest 5 records
+        $latestProducts = Product::latest()->take(5)->get();     // or ->limit(5)
+        $latestCategories = Category::latest()->take(5)->get();
+        $latestTags = Tag::latest()->take(5)->get();
+        $latestCustomers = Customer::latest()->take(5)->get();
+    
         // Pass data to the view
         return view("admin.dashboard", compact(
             'productCount',
             'tagCount',
             'categoryCount',
             'customerCount',
-            'latestProduct',   // Ensure this variable is passed to the view
-            'latestCategory',  // Ensure this variable is passed to the view
-            'latestTag',       // Ensure this variable is passed to the view
-            'latestCustomer'   // Ensure this variable is passed to the view
+            'latestProducts',
+            'latestCategories',
+            'latestTags',
+            'latestCustomers'
         ));
     }
+    
 }

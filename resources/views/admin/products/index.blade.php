@@ -14,19 +14,19 @@
             <input type="text" name="name" value="{{ request('name') }}" class="form-control" placeholder="Search by name">
         </div>
         <div class="col-md-3">
-            <label for="price_min" class="form-label">Price (>=)</label>
+            <label for="price_min" class="form-label">Minimum Price</label>
             <input type="number" name="price_min" value="{{ request('price_min') }}" class="form-control" placeholder="Min price">
         </div>
         <div class="col-md-3">
-            <label for="price_max" class="form-label">Price (<=)</label>
+            <label for="price_max" class="form-label">Max Price</label>
             <input type="number" name="price_max" value="{{ request('price_max') }}" class="form-control" placeholder="Max price">
         </div>
         <div class="col-md-3">
-            <label for="created_at_start" class="form-label">Created Date (Start)</label>
+            <label for="created_at_start" class="form-label">Start Date</label>
             <input type="date" name="created_at_start" value="{{ request('created_at_start') }}" class="form-control">
         </div>
         <div class="col-md-3">
-            <label for="created_at_end" class="form-label">Created Date (End)</label>
+            <label for="created_at_end" class="form-label">End Date</label>
             <input type="date" name="created_at_end" value="{{ request('created_at_end') }}" class="form-control">
         </div>
         <div class="col-md-3">

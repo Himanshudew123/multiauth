@@ -5,6 +5,7 @@
 @section('content')
 <main class="app-main py-4">
   <div class="container-fluid">
+
     <!-- Section: Stats -->
     <div class="row g-4">
       @php
@@ -35,39 +36,133 @@
       @endforeach
     </div>
 
-    <!-- Section: Latest Records -->
+    <!-- Section: Latest Records in Tables -->
     <div class="row g-4 mt-4">
-      <div class="col-12">
-        <h4 class="mb-3 fw-bold text-secondary">Latest Records</h4>
-      </div>
 
-      @php
-        $latestItems = [
-          ['title' => 'Latest Product', 'item' => $latestProduct, 'fields' => ['name', 'price'], 'bg' => 'light'],
-          ['title' => 'Latest Category', 'item' => $latestCategory, 'fields' => ['name'], 'bg' => 'light'],
-          ['title' => 'Latest Tag', 'item' => $latestTag, 'fields' => ['name'], 'bg' => 'light'],
-          ['title' => 'Latest Customer', 'item' => $latestCustomer, 'fields' => ['name', 'email'], 'bg' => 'light'],
-        ];
-      @endphp
-
-      @foreach ($latestItems as $latest)
-        <div class="col-12 col-sm-6 col-md-3">
-          <div class="card border-0 shadow-sm h-100">
-            <div class="card-header bg-white border-bottom-0">
-              <h6 class="card-title fw-bold text-dark">{{ $latest['title'] }}</h6>
-            </div>
-            <div class="card-body">
-              @if ($latest['item'])
-                @foreach ($latest['fields'] as $field)
-                  <p class="mb-1"><strong class="text-muted">{{ ucfirst($field) }}:</strong> {{ $latest['item']->$field }}</p>
-                @endforeach
-              @else
-                <p class="text-muted">No {{ strtolower($latest['title']) }} found.</p>
-              @endif
-            </div>
+      <!-- Products -->
+      <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+            <h6 class="mb-0">Latest Products</h6>
+            <a href="{{ route('admin.products.index') }}" class="btn btn-sm btn-primary border">View All</a>
+          </div>
+          <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                @forelse ($latestProducts as $index => $product)
+                  <tr>
+                    <td>{{ $index + 1 }}</td>
+                    <td>{{ $product->name }}</td>
+                    <td>₹{{ number_format($product->price, 2) }}</td>
+                  </tr>
+                @empty
+                  <tr><td colspan="3" class="text-muted text-center">No products found.</td></tr>
+                @endforelse
+              </tbody>
+            </table>
           </div>
         </div>
-      @endforeach
+      </div>
+
+      <!-- Categories -->
+      <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+            <h6 class="mb-0">Latest Categories</h6>
+            <a href="{{ route('admin.categories.index') }}" class="btn btn-sm btn-primary border">View All</a>
+          </div>
+          <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                </tr>
+              </thead>
+              <tbody>
+                @forelse ($latestCategories as $index => $category)
+                  <tr>
+                    <td>{{ $index + 1 }}</td>
+                    <td>{{ $category->name }}</td>
+                  </tr>
+                @empty
+                  <tr><td colspan="2" class="text-muted text-center">No categories found.</td></tr>
+                @endforelse
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tags -->
+      <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h6 class="mb-0">Latest Tags</h6>
+            <a href="{{ route('admin.tags.index') }}" class="btn btn-sm btn-primary border">View All</a>
+          </div>
+          <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                </tr>
+              </thead>
+              <tbody>
+                @forelse ($latestTags as $index => $tag)
+                  <tr>
+                    <td>{{ $index + 1 }}</td>
+                    <td>{{ $tag->name }}</td>
+                  </tr>
+                @empty
+                  <tr><td colspan="2" class="text-muted text-center">No tags found.</td></tr>
+                @endforelse
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Customers -->
+      <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+            <h6 class="mb-0">Latest Customers</h6>
+            <a href="{{ route('admin.customers.index') }}" class="btn btn-sm btn-primary border">View All</a>
+          </div>
+          <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                </tr>
+              </thead>
+              <tbody>
+                @forelse ($latestCustomers as $index => $customer)
+                  <tr>
+                    <td>{{ $index + 1 }}</td>
+                    <td>{{ $customer->name }}</td>
+                    <td>{{ $customer->email }}</td>
+                  </tr>
+                @empty
+                  <tr><td colspan="3" class="text-muted text-center">No customers found.</td></tr>
+                @endforelse
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </main>

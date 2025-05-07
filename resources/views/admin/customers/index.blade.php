@@ -7,7 +7,8 @@
         <h2 class="mb-4">User List</h2>
 
         <!-- Filter Form -->
-        <form method="GET" action="{{ route('admin.customers.index') }}" class="row g-3 align-items-end mb-4">
+        <form method="POST" action="{{ route('admin.customers.index') }}" class="row g-3 align-items-end mb-4">
+            @csrf
     <!-- Name -->
     <div class="col-md-2">
         <label for="name" class="form-label">Name</label>
@@ -22,15 +23,15 @@
 
     <!-- Date Range -->
     <div class="col-md-4">
-        <label class="form-label">Date Range</label>
+        
         <div class="row g-2">
             <div class="col">
+                <label for="" class="form-label">Start Date</label>
                 <input type="date" name="start_date" value="{{ request('start_date') }}" class="form-control">
             </div>
-            <div class="col-auto d-flex align-items-center">
-                <span>to</span>
-            </div>
+           
             <div class="col">
+            <label for="" class="form-label">End Date</label>
                 <input type="date" name="end_date" value="{{ request('end_date') }}" class="form-control">
             </div>
         </div>

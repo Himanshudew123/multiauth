@@ -15,8 +15,9 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid')->unique();
             $table->string('name');
+            $table->boolean('is_deleted')->default(0); // 0 = not deleted, 1 = deleted
             $table->timestamps();
-            $table->softDeletes();
+           
         });
     }
 

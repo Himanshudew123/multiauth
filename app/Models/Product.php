@@ -3,41 +3,55 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
-use App\Models\Category; // Assuming you have a Category model
-use App\Models\Tag; // Assuming you have a Category model
+use App\Models\Category;
+use App\Models\Tag;
 
 class Product extends Model
 {
-    use SoftDeletes;
-
-    // Define the attributes that are mass assignable
     protected $fillable = [
-        'uuid', 'name', 'category_id', 'price', 'photo'
+        'uuid', 'name', 'category_id', 'price', 'photo', 'is_deleted'
     ];
 
-    // Define the attributes that should be cast to native types
-
-    // Automatically generate UUID on creation
-    protected static function boot()
+    // Automatically generate UUID on creation and apply global scope
+    protected static function booted()
     {
-        parent::boot();
-
         static::creating(function ($product) {
             if (empty($product->uuid)) {
-                $product->uuid = (string) Str::uuid(); // Generate UUID if it's not provided
+                $product->uuid = (string) Str::uuid();
             }
+        });
+
+        // Global scope to only show products that are not soft deleted
+        static::addGlobalScope('notDeleted', function (Builder $builder) {
+            $builder->where('is_deleted', 0);
         });
     }
 
-    // Optionally, you can define relationships with other models, such as Category
+    // Soft-delete logic using boolean column
+    public function softDelete()
+    {
+        $this->is_deleted = 1;
+        $this->save();
+    }
+
+    // Restore the product (set 'is_deleted' to 0)
+    public function restore()
+    {
+        $this->is_deleted = 0;
+        $this->save();
+    }
+
+    // Relationship with Category model
     public function category()
     {
-        return $this->belongsTo(Category::class); // Assuming Category model exists
+        return $this->belongsTo(Category::class);
     }
+
+    // Relationship with Tag model (many-to-many)
     public function tags()
-{
-    return $this->belongsToMany(Tag::class, 'product_tags', 'product_id', 'tag_id');
-}
+    {
+        return $this->belongsToMany(Tag::class, 'product_tags', 'product_id', 'tag_id');
+    }
 }

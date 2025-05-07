@@ -19,7 +19,7 @@ return new class extends Migration
             $table->decimal('price', 10, 2); // Price (adjust precision/scale as needed)
             $table->json('photo')->nullable(); // Storing multiple photos in JSON format (nullable)
             $table->timestamps(); // created_at and updated_at
-            $table->softDeletes(); // deleted_at (nullable timestamp for soft deletes)
+            $table->boolean('is_deleted')->default(0); // 0 = not deleted, 1 = deleted
             // Add foreign key constraint for category_id (if you have a categories table)
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
         });

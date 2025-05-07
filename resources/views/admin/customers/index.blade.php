@@ -114,6 +114,8 @@
                 {{ $customers->withQueryString()->links('pagination::bootstrap-4') }}
             </nav>
         </div>
+        <a href="{{ route('admin.customers.pdf') }}" class="btn btn-info">Download PDF</a>
+
     </div>
 @endsection
 

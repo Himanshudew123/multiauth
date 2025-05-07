@@ -37,7 +37,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::delete('/customers/{customer}', [CustomerController::class,'destroy'])->name('customers.destroy');
     Route::get('/customers/create', [CustomerController::class,'create'])->name('customers.create');
     Route::post('/customers/store', [CustomerController::class,'store'])->name('customers.store');
-
+    Route::get('/customers/pdf', [CustomerController::class, 'generatePDF'])->name('customers.pdf');
 
 
 

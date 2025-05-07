@@ -85,7 +85,7 @@ class TagsController extends Controller
     public function destroy(string $uuid)
     {
         $tag = Tag::where('uuid', $uuid)->firstOrFail();
-        $tag->delete();
+        $tag->softDelete();
 
         return redirect()->back()->with('success', 'Tag deleted successfully!');
     }

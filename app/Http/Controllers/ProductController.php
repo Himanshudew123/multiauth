@@ -213,4 +213,14 @@ class ProductController extends Controller
             return response()->json(['message' => 'Server error.'], 500);
         }
     }
+    public function destroy($uuid)
+{
+    $product = Product::where('uuid', $uuid)->firstOrFail();
+
+    // Call the overridden delete method to set 'is_deleted' to 1
+    $product->softDelete();
+
+    return redirect()->back()->with('success', 'Customer deleted successfully!');
+}
+
 }

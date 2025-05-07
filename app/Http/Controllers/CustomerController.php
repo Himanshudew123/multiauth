@@ -196,12 +196,24 @@ class CustomerController extends Controller
     public function destroy(string $uuid)
     {
         $customer = Customer::where('uuid', $uuid)->firstOrFail();
-
+    
         if ($customer->photo) {
             Storage::disk('public')->delete($customer->photo);
         }
-
-        $customer->delete();
+    
+        $customer->softDelete(); // Use custom soft delete logic
         return redirect()->back()->with('success', 'Customer deleted successfully!');
+    }
+    
+    public function generatePDF()
+    {
+        // Fetch all customers
+        $customers = Customer::all();
+
+        // Load the view for the PDF with the customers data
+        $pdf = Pdf::loadView('admin.customers.pdf', compact('customers'));
+
+        // Download the PDF
+        return $pdf->download('customers_list.pdf');
     }
 }

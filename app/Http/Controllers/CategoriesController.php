@@ -97,7 +97,7 @@ class CategoriesController extends Controller
     public function destroy(string $uuid)
     {
         $category = Category::where('uuid', $uuid)->firstOrFail();
-        $category->delete();
+        $category->softDelete();
 
         return redirect()->back()->with('success', 'Category deleted successfully!');
     }

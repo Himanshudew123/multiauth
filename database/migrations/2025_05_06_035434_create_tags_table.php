@@ -15,8 +15,9 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid')->unique();
             $table->string('name');
+            $table->boolean('is_deleted')->default(0); // Add is_deleted field for custom soft delete
             $table->timestamps();
-            $table->softDeletes(); // optional: use only if you need soft delete functionality
+           
         });
     }
 

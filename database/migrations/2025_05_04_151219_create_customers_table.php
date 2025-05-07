@@ -21,8 +21,9 @@ return new class extends Migration
             $table->unsignedTinyInteger('gender');
             $table->text('photo');
             $table->string('number', 15)->nullable();
+            $table->boolean('is_deleted')->default(0); // 0 = not deleted, 1 = deleted
             $table->timestamps();              // created_at and updated_at
-            $table->softDeletes();            // deleted_at (nullable timestamp)
+          
         });
     }
 

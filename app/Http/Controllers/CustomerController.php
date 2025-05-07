@@ -149,7 +149,7 @@ class CustomerController extends Controller
             'email'  => ['required', 'email', 'unique:customers,email,' . Customer::where('uuid', $uuid)->firstOrFail()->id],
             'password'=> ['nullable', 'min:8'],
             'number' => ['required', 'digits_between:10,15'],
-            'gender' => ['required', 'in:Male,Female'],
+            'gender' => ['required', 'in:1,2,3'],
             'bio'    => ['required', 'string'],
         ]);
 

@@ -6,30 +6,41 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Customer;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class CustomerController extends Controller
 {
     public function index(Request $request)
     {
         $query = Customer::query();
-
+    
+        // Name Filter
         if ($request->filled('name')) {
             $query->where('name', 'like', '%' . $request->name . '%');
         }
-
+    
+        // Phone Number Filter (digits only)
         if ($request->filled('number')) {
-            $query->where('number', 'like', '%' . $request->number . '%');
+            $number = preg_replace('/\D/', '', $request->number); // remove non-digits
+            if (!empty($number)) {
+                $query->where('number', 'like', '%' . $number . '%');
+            }
         }
-
-        if ($request->filled('created_at')) {
-            $query->whereDate('created_at', $request->created_at);
+    
+        // Date Range Filter
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $query->whereBetween('created_at', [$request->start_date, $request->end_date]);
+        } elseif ($request->filled('start_date')) {
+            $query->whereDate('created_at', '>=', $request->start_date);
+        } elseif ($request->filled('end_date')) {
+            $query->whereDate('created_at', '<=', $request->end_date);
         }
-
+    
         $customers = $query->latest()->paginate(5);
-
+    
         return view('admin.customers.index', compact('customers'));
     }
-
+    
     public function create()
     {
         return view('admin.customers.create');
@@ -192,4 +203,6 @@ class CustomerController extends Controller
 
         return redirect()->back()->with('success', 'Customer deleted successfully!');
     }
+    
+    
 }

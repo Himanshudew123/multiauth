@@ -17,18 +17,27 @@ class ProductController extends Controller
     {
         $query = Product::with(['category', 'tags']);
 
+        // Filter by product name
         if ($request->filled('name')) {
             $query->where('name', 'like', '%' . $request->name . '%');
         }
 
-        if ($request->filled('price')) {
-            $query->where('price', '<=', $request->price);
+        // Filter by max price
+        if ($request->filled('price_max')) {
+            $query->where('price', '<=', $request->price_max);
         }
 
-        if ($request->filled('created_at')) {
-            $query->whereDate('created_at', $request->created_at);
+        // Filter by min price
+        if ($request->filled('price_min')) {
+            $query->where('price', '>=', $request->price_min);
         }
 
+        // Filter by created date
+        if ($request->filled('created_at_start') && $request->filled('created_at_end')) {
+            $query->whereBetween('created_at', [$request->created_at_start, $request->created_at_end]);
+        }
+
+        // Sorting and Pagination
         $products = $query->orderByDesc('created_at')->paginate(5);
 
         return view('admin.products.index', compact('products'));

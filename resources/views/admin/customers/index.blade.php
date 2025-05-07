@@ -7,7 +7,8 @@
         <h2 class="mb-4">User List</h2>
 
         <!-- Filter Form -->
-        <form method="GET" action="{{ route('admin.customers.index') }}" class="row g-3 align-items-end mb-4">
+        <form method="POST" action="{{ route('admin.customers.index') }}" class="row g-3 align-items-end mb-4">
+            @csrf
             <div class="col-md-3">
                 <label for="name" class="form-label">Name</label>
                 <input type="text" name="name" value="{{ request('name') }}" class="form-control"
@@ -25,7 +26,7 @@
             <div class="col-md-4 d-flex gap-3">
                 <button type="submit" class="btn btn-primary">Search</button>
                 <a href="{{ route('admin.customers.index') }}" class="btn btn-secondary">Reset</a>
-                <a href="{{ route('admin.customers.create') }}" class="btn btn-success">+ Create New User</a>
+                <a href="{{ route('admin.customers.create') }}" class="btn btn-success"><i class="fa-solid fa-plus"></i> Create New User</a>
             </div>
         </form>
 

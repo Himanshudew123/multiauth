@@ -11,10 +11,7 @@
         font-family: 'Segoe UI', sans-serif;
     }
 
-    .card {
-        border: none;
-        border-radius: 1rem;
-    }
+
 
     .form-label {
         font-weight: 500;
@@ -37,11 +34,11 @@
     }
 </style>
 
-<div class="container mt-5">
-    <a href="{{ route('admin.products.index') }}" class="btn btn-primary mb-3">Back</a>
+<div class="container">
+  
 
-    <div class="card shadow-lg p-5 bg-white">
-        <h3 class="mb-4 text-primary">Add New Product</h3>
+    
+        <h3 class="mb-3 text-primary mt-2">Add New Product</h3>
 
         <form id="productForm" enctype="multipart/form-data">
             @csrf
@@ -82,11 +79,14 @@
                 </div>
             </div>
 
-            <div class="mt-4 text-end">
-                <button type="submit" class="btn btn-primary btn-lg">Add Product</button>
+            <div class="mt-3 mb-2 text-end">
+            <a href="{{ route('admin.products.index') }}" class="btn btn-secondary mx-2">Back</a>
+            <button type="reset" class="btn btn-primary mx-2 ">Reset</button>
+                <button type="submit" class="btn btn-success mx-2 ">Add Product</button>
+               
             </div>
         </form>
-    </div>
+  
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

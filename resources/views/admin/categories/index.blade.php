@@ -9,11 +9,13 @@
     @endif
 
     <div class="mb-3 d-flex justify-content-between align-items-center">
-        <form method="GET" class="d-flex align-items-center">
+        <form method="POST" class="d-flex align-items-center">
+            @csrf
             <input type="text" name="name" value="{{ request('name') }}" placeholder="Search by name" class="form-control me-2" style="width: 250px;">
             <button type="submit" class="btn btn-primary">Search</button>
+            <a href="{{ route('admin.categories.index') }}" class="btn btn-secondary mx-2">Reset</a>
         </form>
-        <a href="{{ route('admin.categories.create') }}" class="btn btn-success">Create Category</a>
+        <a href="{{ route('admin.categories.create') }}" class="btn btn-success"><i class="fa-solid fa-plus"></i> Create Category</a>
     </div>
 
     <table class="table table-bordered table-hover">

@@ -25,6 +25,7 @@
           <a href="{{ route('admin.customers.index') }}" class="nav-link {{ request()->routeIs('admin.customers.*') ? 'active' : '' }}">
             <i class="nav-icon bi bi-people-fill"></i>
             <p>Manage Users</p>
+            <p>{{ $customerCount }}</p>
           </a>
         </li>
 
@@ -33,6 +34,7 @@
           <a href="{{ route('admin.products.index') }}" class="nav-link {{ request()->routeIs('admin.prducts.*') ? 'active' : '' }}">
             <i class="nav-icon bi bi-tags-fill"></i>
             <p>Manage Products</p>
+            <p>{{ $productCount }}</p>
           </a>
         </li>
 
@@ -41,6 +43,7 @@
           <a href="{{ route('admin.categories.index') }}" class="nav-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
             <i class="nav-icon bi bi-tags-fill"></i>
             <p>Manage Categories</p>
+            <p>{{ $categoryCount }}</p>
           </a>
         </li>
 
@@ -50,6 +53,7 @@
           <a href="{{ route('admin.tags.index') }}" class="nav-link {{ request()->routeIs('admin.tags.*') ? 'active' : '' }}">
             <i class="nav-icon bi bi-tags-fill"></i>
             <p>Manage Tags</p>
+            <p>{{ $tagCount}}</p>
           </a>
         </li>
 

@@ -8,36 +8,46 @@
 
     <!-- Filter Form -->
     <form method="POST" action="{{ route('admin.products.index') }}" class="row g-3 align-items-end mb-4">
-    @csrf
-    <div class="col-md-3">
-        <label for="name" class="form-label">Product Name</label>
-        <input type="text" name="name" value="{{ request('name') }}" class="form-control" placeholder="Search by name">
-    </div>
-    <div class="col-md-3">
-        <label for="price_min" class="form-label">Price (>=)</label>
-        <input type="number" name="price_min" value="{{ request('price_min') }}" class="form-control" placeholder="Min price">
-    </div>
-    <div class="col-md-3">
-        <label for="price_max" class="form-label">Price (<=)</label>
-        <input type="number" name="price_max" value="{{ request('price_max') }}" class="form-control" placeholder="Max price">
-    </div>
-    <div class="col-md-3">
-        <label for="created_at_start" class="form-label">Created Date (Start)</label>
-        <input type="date" name="created_at_start" value="{{ request('created_at_start') }}" class="form-control">
-    </div>
-    <div class="col-md-3">
-        <label for="created_at_end" class="form-label">Created Date (End)</label>
-        <input type="date" name="created_at_end" value="{{ request('created_at_end') }}" class="form-control">
-    </div>
-    <div class="col-md-5 d-flex gap-2">
-        <button type="submit" class="btn btn-primary">Search</button>
-        <a href="{{ route('admin.products.index') }}" class="btn btn-secondary">Reset</a>
-        <a href="{{ route('admin.products.create') }}" class="btn btn-success"><i class="fa-solid fa-plus"></i> Create New Product</a>
-    </div>
-    <div class="col-md-3 d-flex justify-content-end">
-        
-    </div>
-</form>
+        @csrf
+        <div class="col-md-3">
+            <label for="name" class="form-label">Product Name</label>
+            <input type="text" name="name" value="{{ request('name') }}" class="form-control" placeholder="Search by name">
+        </div>
+        <div class="col-md-3">
+            <label for="price_min" class="form-label">Price (>=)</label>
+            <input type="number" name="price_min" value="{{ request('price_min') }}" class="form-control" placeholder="Min price">
+        </div>
+        <div class="col-md-3">
+            <label for="price_max" class="form-label">Price (<=)</label>
+            <input type="number" name="price_max" value="{{ request('price_max') }}" class="form-control" placeholder="Max price">
+        </div>
+        <div class="col-md-3">
+            <label for="created_at_start" class="form-label">Created Date (Start)</label>
+            <input type="date" name="created_at_start" value="{{ request('created_at_start') }}" class="form-control">
+        </div>
+        <div class="col-md-3">
+            <label for="created_at_end" class="form-label">Created Date (End)</label>
+            <input type="date" name="created_at_end" value="{{ request('created_at_end') }}" class="form-control">
+        </div>
+        <div class="col-md-3">
+            <label for="category_id" class="form-label">Category</label>
+            <select name="category_id" class="form-select">
+                <option value="">-- All Categories --</option>
+                @foreach ($categories as $category)
+                    <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
+                        {{ $category->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-md-6 d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Search</button>
+            <a href="{{ route('admin.products.index') }}" class="btn btn-secondary">Reset</a>
+            <a href="{{ route('admin.products.create') }}" class="btn btn-success">
+                <i class="fa-solid fa-plus"></i> Create New Product
+            </a>
+        </div>
+    </form>
 
     <!-- Summary -->
     <div class="d-flex justify-content-between align-items-center mb-3">

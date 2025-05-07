@@ -39,7 +39,7 @@
             </div>
 
             <!-- Tags -->
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <label for="tags" class="form-label">Tags:</label>
                 <select name="tags[]" id="tags" class="form-select" multiple="multiple">
                     @foreach($tags as $tag)
@@ -48,7 +48,7 @@
                         </option>
                     @endforeach
                 </select>
-                <div id="tagsError" class="text-danger small d-none">At least one tag is required.</div>
+                <div id="tagsError" class="text-danger small d-none mt-1">At least one tag is required.</div>
             </div>
 
             <!-- Photo -->
@@ -95,6 +95,19 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('styles')
+<!-- Select2 with Bootstrap 5 Theme -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@1.5.2/dist/select2-bootstrap4.min.css" rel="stylesheet" />
+<style>
+    .select2-container--bootstrap-5 .select2-selection {
+        min-height: calc(2.5rem + 2px);
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+    }
+</style>
 @endsection
 
 @section('scripts')
@@ -166,7 +179,9 @@
 
     $('#tags').select2({
         placeholder: "Select Tags",
-        allowClear: true
+        allowClear: true,
+        theme: "bootstrap-5",
+        width: '100%'
     });
 
     $.ajaxSetup({
@@ -191,7 +206,7 @@
         const encrypted = encryptData(data);
         formData.append('payload', encrypted);
         formData.append('_token', $('input[name="_token"]').val());
-        formData.append('_method', 'PUT'); // IMPORTANT for Laravel PUT spoofing
+        formData.append('_method', 'PUT');
 
         const file = $('#photoInput')[0].files[0];
         if (file) {
@@ -209,15 +224,15 @@
             contentType: false,
             processData: false,
             success: function(res) {
-    Swal.fire({
-        title: 'Updated!',
-        text: res.message,
-        icon: 'success',
-        confirmButtonText: 'OK'
-    }).then(() => {
-        window.location.href = "{{ route('admin.products.index') }}";
-    });
-},
+                Swal.fire({
+                    title: 'Updated!',
+                    text: res.message,
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    window.location.href = "{{ route('admin.products.index') }}";
+                });
+            },
             error: function(xhr) {
                 if (xhr.status === 422 && xhr.responseJSON?.errors) {
                     let msg = '';

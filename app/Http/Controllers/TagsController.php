@@ -7,17 +7,35 @@ use Illuminate\Http\Request;
 class TagsController extends Controller
 {
     public function index(Request $request)
-    {
-        $query = Tag::query();
+{
+    // 1. Validate that 'name' is either empty or:
+    //    • a string
+    //    • at least 3 characters
+    //    • contains only letters and spaces
+    $validated = $request->validate([
+        'name' => [
+            'nullable',
+            'string',
+            'min:3',
+            'regex:/^[A-Za-z\s]+$/'
+        ],
+    ], [
+        'name.regex' => 'The name may only contain letters and spaces.',
+    ]);
 
-        if ($request->filled('name')) {
-            $query->where('name', 'like', '%' . $request->name . '%');
-        }
+    // 2. Build the Tag query
+    $query = Tag::query();
 
-        $tags = $query->latest()->paginate(5);
-
-        return view('admin.tags.index', compact('tags'));
+    // 3. Apply the name filter only when validation passed
+    if (!empty($validated['name'])) {
+        $query->where('name', 'like', '%' . $validated['name'] . '%');
     }
+
+    // 4. Paginate and pass to the view
+    $tags = $query->latest()->paginate(5);
+
+    return view('admin.tags.index', compact('tags'));
+}
 
     public function create()
     {

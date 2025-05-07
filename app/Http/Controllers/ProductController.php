@@ -14,34 +14,61 @@ use Illuminate\Support\Facades\Log;
 class ProductController extends Controller
 {
     public function index(Request $request)
-    {
-        $query = Product::with(['category', 'tags']);
+{
+    $validated = $request->validate([
+        'name' => [
+            'nullable',
+            'string',
+            'min:3',
+            'regex:/^[A-Za-z\s]+$/'
+        ],
+        'price_min' => ['nullable', 'numeric'],
+        'price_max' => ['nullable', 'numeric'],
+        'created_at_start' => ['nullable', 'date'],
+        'created_at_end' => ['nullable', 'date'],
+        'category_id' => ['nullable', 'exists:categories,id'],
+        'tag_ids' => ['nullable', 'array'],
+        'tag_ids.*' => ['exists:tags,id'],
+    ]);
 
-        // Filter by product name
-        if ($request->filled('name')) {
-            $query->where('name', 'like', '%' . $request->name . '%');
-        }
+    $query = Product::with(['category', 'tags']);
 
-        // Filter by max price
-        if ($request->filled('price_max')) {
-            $query->where('price', '<=', $request->price_max);
-        }
-
-        // Filter by min price
-        if ($request->filled('price_min')) {
-            $query->where('price', '>=', $request->price_min);
-        }
-
-        // Filter by created date
-        if ($request->filled('created_at_start') && $request->filled('created_at_end')) {
-            $query->whereBetween('created_at', [$request->created_at_start, $request->created_at_end]);
-        }
-
-        // Sorting and Pagination
-        $products = $query->orderByDesc('created_at')->paginate(5);
-
-        return view('admin.products.index', compact('products'));
+    if (!empty($validated['name'])) {
+        $query->where('name', 'like', '%' . $validated['name'] . '%');
     }
+
+    if (!empty($validated['price_min'])) {
+        $query->where('price', '>=', $validated['price_min']);
+    }
+
+    if (!empty($validated['price_max'])) {
+        $query->where('price', '<=', $validated['price_max']);
+    }
+
+    if (!empty($validated['created_at_start']) && !empty($validated['created_at_end'])) {
+        $query->whereBetween('created_at', [
+            $validated['created_at_start'],
+            $validated['created_at_end']
+        ]);
+    }
+
+    if (!empty($validated['category_id'])) {
+        $query->where('category_id', $validated['category_id']);
+    }
+
+    if (!empty($validated['tag_ids'])) {
+        $query->whereHas('tags', function ($q) use ($validated) {
+            $q->whereIn('tags.id', $validated['tag_ids']);
+        });
+    }
+
+    $products = $query->orderByDesc('created_at')->paginate(5);
+    $categories = Category::all();
+    $tags = Tag::all();
+
+    return view('admin.products.index', compact('products', 'categories', 'tags'));
+}
+
 
     public function create()
     {

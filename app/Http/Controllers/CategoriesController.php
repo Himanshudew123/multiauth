@@ -7,17 +7,30 @@ use Illuminate\Http\Request;
 class CategoriesController extends Controller
 {
     public function index(Request $request)
-    {
-        $query = Category::query();
+{
+    // 1. Validate that 'name' is at least 3 characters if present
+    $validated = $request->validate([
+        'name' => [
+            'nullable',
+            'string',
+            'min:3',
+            'regex:/^[A-Za-z\s]+$/'
+        ],
+    ]);
 
-        if ($request->filled('name')) {
-            $query->where('name', 'like', '%' . $request->name . '%');
-        }
+    // 2. Build the query
+    $query = Category::query();
 
-        $categories = $query->latest()->paginate(5);
-
-        return view('admin.categories.index', compact('categories'));
+    // 3. Apply the name filter only when it passes validation (i.e. 3+ chars)
+    if (!empty($validated['name'])) {
+        $query->where('name', 'like', '%' . $validated['name'] . '%');
     }
+
+    // 4. Paginate and return
+    $categories = $query->latest()->paginate(5);
+    return view('admin.categories.index', compact('categories'));
+}
+
 
     public function create()
     {

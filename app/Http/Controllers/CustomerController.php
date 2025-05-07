@@ -11,35 +11,49 @@ use Barryvdh\DomPDF\Facade\Pdf;
 class CustomerController extends Controller
 {
     public function index(Request $request)
-    {
-        $query = Customer::query();
-    
-        // Name Filter
-        if ($request->filled('name')) {
-            $query->where('name', 'like', '%' . $request->name . '%');
-        }
-    
-        // Phone Number Filter (digits only)
-        if ($request->filled('number')) {
-            $number = preg_replace('/\D/', '', $request->number); // remove non-digits
-            if (!empty($number)) {
-                $query->where('number', 'like', '%' . $number . '%');
-            }
-        }
-    
-        // Date Range Filter
-        if ($request->filled('start_date') && $request->filled('end_date')) {
-            $query->whereBetween('created_at', [$request->start_date, $request->end_date]);
-        } elseif ($request->filled('start_date')) {
-            $query->whereDate('created_at', '>=', $request->start_date);
-        } elseif ($request->filled('end_date')) {
-            $query->whereDate('created_at', '<=', $request->end_date);
-        }
-    
-        $customers = $query->latest()->paginate(5);
-    
-        return view('admin.customers.index', compact('customers'));
+{
+    // Validate the inputs
+    $validated = $request->validate([
+        'name' => [
+            'nullable',
+            'string',
+            'min:3',
+            'regex:/^[A-Za-z\s]+$/'
+        ],
+        'number' => ['nullable', 'string'],
+        'start_date' => ['nullable', 'date'],
+        'end_date' => ['nullable', 'date'],
+    ]);
+
+    $query = Customer::query();
+
+    // Name Filter (only if 3+ characters)
+    if (!empty($validated['name'])) {
+        $query->where('name', 'like', '%' . $validated['name'] . '%');
     }
+
+    // Phone Number Filter (digits only)
+    if (!empty($validated['number'])) {
+        $number = preg_replace('/\D/', '', $validated['number']);
+        if (!empty($number)) {
+            $query->where('number', 'like', '%' . $number . '%');
+        }
+    }
+
+    // Date Range Filter
+    if (!empty($validated['start_date']) && !empty($validated['end_date'])) {
+        $query->whereBetween('created_at', [$validated['start_date'], $validated['end_date']]);
+    } elseif (!empty($validated['start_date'])) {
+        $query->whereDate('created_at', '>=', $validated['start_date']);
+    } elseif (!empty($validated['end_date'])) {
+        $query->whereDate('created_at', '<=', $validated['end_date']);
+    }
+
+    $customers = $query->latest()->paginate(5);
+
+    return view('admin.customers.index', compact('customers'));
+}
+
     
     public function create()
     {

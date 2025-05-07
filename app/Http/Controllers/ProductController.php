@@ -52,37 +52,25 @@ class ProductController extends Controller
                 return response()->json(['success' => false, 'message' => 'Invalid data after decryption.']);
             }
 
-            $requiredFields = ['name', 'price', 'category_id', 'tags'];
-            foreach ($requiredFields as $field) {
-                if (!isset($data[$field]) || (is_string($data[$field]) && trim($data[$field]) === '')) {
-                    return response()->json(['success' => false, 'message' => "Missing or empty field: $field"]);
-                }
+            $validator = Validator::make($data, [
+                'name'        => ['required', 'regex:/^[\p{L}\s0-9\-.,]+$/u'],
+                'price'       => ['required', 'numeric', 'min:0'],
+                'category_id' => ['required', 'exists:categories,id'],
+                'tags'        => ['required', 'array'],
+                'tags.*'      => ['exists:tags,id']
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'field_errors' => $validator->errors(),
+                    'message' => 'Validation failed.'
+                ], 422);
             }
 
-            $errors = [];
-
-            if (!preg_match("/^[\p{L}\s0-9\-.,]+$/u", $data['name'])) {
-                $errors[] = 'Product name contains invalid characters.';
-            }
-
-            if (!is_numeric($data['price']) || $data['price'] < 0) {
-                $errors[] = 'Price must be a non-negative number.';
-            }
-
-            if (!is_numeric($data['category_id'])) {
-                $errors[] = 'Invalid category selected.';
-            }
-
-            if (!is_array($data['tags'])) {
-                $errors[] = 'Tags must be an array.';
-            }
-
-            if (!empty($errors)) {
-                return response()->json(['success' => false, 'message' => $errors]);
-            }
+            $validated = $validator->validated();
 
             $imagePaths = [];
-
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $image) {
                     if ($image->isValid()) {
@@ -94,13 +82,13 @@ class ProductController extends Controller
 
             $product = new Product();
             $product->uuid = Str::uuid();
-            $product->name = $data['name'];
-            $product->price = $data['price'];
-            $product->category_id = $data['category_id'];
+            $product->name = $validated['name'];
+            $product->price = $validated['price'];
+            $product->category_id = $validated['category_id'];
             $product->photo = json_encode($imagePaths);
             $product->save();
 
-            $product->tags()->sync($data['tags']);
+            $product->tags()->sync($validated['tags']);
 
             return response()->json(['success' => true, 'message' => 'Product created successfully.']);
 
@@ -130,45 +118,42 @@ class ProductController extends Controller
         try {
             $decrypted = decryptAES($request->input('payload'));
             $data = json_decode($decrypted, true);
-           
+
             if (!$data) {
                 return response()->json(['message' => 'Invalid decrypted data.'], 422);
             }
-    
+
             $validator = Validator::make($data, [
-                'name'        => ['required', 'string', 'max:255'],
+                'name'        => ['required', 'string', 'max:255', 'regex:/^[\p{L}\s0-9\-.,]+$/u'],
                 'price'       => ['required', 'numeric', 'min:0'],
                 'category_id' => ['nullable', 'exists:categories,id'],
                 'tags'        => ['nullable', 'array'],
-                'tags.*'      => ['exists:tags,id']  // Ensure each tag ID exists in the tags table
+                'tags.*'      => ['exists:tags,id']
             ]);
-    
+
             if ($validator->fails()) {
                 return response()->json(['errors' => $validator->errors()], 422);
             }
-    
+
             $validated = $validator->validated();
-    
+
             $product = Product::where('uuid', $uuid)->firstOrFail();
             $product->name = $validated['name'];
             $product->price = $validated['price'];
             $product->category_id = $validated['category_id'] ?? null;
-    
+
             // Handle photo upload or removal
             if ($request->hasFile('photo')) {
-                // Delete old photos if any
                 if ($product->photo) {
                     foreach (json_decode($product->photo, true) ?? [] as $oldPhotoPath) {
                         Storage::disk('public')->delete($oldPhotoPath);
                     }
                 }
-    
-                // Upload new photo
+
                 $file = $request->file('photo');
                 $path = $file->store('products', 'public');
                 $product->photo = json_encode([$path]);
             } elseif ($request->input('remove_existing_photo') === '1') {
-                // Remove existing photo if requested
                 if ($product->photo) {
                     foreach (json_decode($product->photo, true) ?? [] as $photoPath) {
                         Storage::disk('public')->delete($photoPath);
@@ -176,23 +161,20 @@ class ProductController extends Controller
                 }
                 $product->photo = null;
             }
-    
-            // Save product data
+
             $product->save();
-    
-            // Sync tags: If tags exist, sync them; otherwise, detach them
+
             if (isset($validated['tags']) && !empty($validated['tags'])) {
                 $product->tags()->sync($validated['tags']);
             } else {
                 $product->tags()->detach();
             }
-    
+
             return response()->json(['message' => 'Product updated successfully.']);
-    
+
         } catch (\Exception $e) {
-            \Log::error('Product Update Error: ' . $e->getMessage());
+            Log::error('Product Update Error: ' . $e->getMessage());
             return response()->json(['message' => 'Server error.'], 500);
         }
     }
-    
 }

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Tag;
@@ -14,62 +15,28 @@ class HomeController extends Controller
      */
     public function index()
     {
+        // Count records
         $productCount = Product::count();
         $tagCount = Tag::count();
         $categoryCount = Category::count();
         $customerCount = Customer::count();
-        
-        return view("admin.dashboard", compact('productCount', 'tagCount', 'categoryCount', 'customerCount'));
-        
-    }
-   
 
+        // Get the latest records
+        $latestProduct = Product::latest()->first();  // Fetch the most recent product
+        $latestCategory = Category::latest()->first();  // Fetch the most recent category
+        $latestTag = Tag::latest()->first();  // Fetch the most recent tag
+        $latestCustomer = Customer::latest()->first();  // Fetch the most recent customer
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        // Pass data to the view
+        return view("admin.dashboard", compact(
+            'productCount',
+            'tagCount',
+            'categoryCount',
+            'customerCount',
+            'latestProduct',   // Ensure this variable is passed to the view
+            'latestCategory',  // Ensure this variable is passed to the view
+            'latestTag',       // Ensure this variable is passed to the view
+            'latestCustomer'   // Ensure this variable is passed to the view
+        ));
     }
 }

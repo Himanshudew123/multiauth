@@ -86,7 +86,7 @@ class CustomerController extends Controller
                     'regex:/[@$!%*?&]/',
                 ],
                 'number'   => ['required', 'digits_between:10,15', 'regex:/^[6-9]\d{9}$/'],
-                'gender'   => ['required', 'in:Male,Female'],
+                'gender'   => ['required', 'in:1,2,3'],
                 'bio'      => ['required', 'string'],
             ]);
 

@@ -18,19 +18,18 @@
                     <!-- Profile Photo -->
                     <div class="col-md-4 text-center mb-4 mb-md-0">
                         @if($customer->photo)
-                        
-                            <img src="{{ asset('storage/' . $customer->photo) }}" 
-                                 alt="Profile Photo" 
-                                 class="img-fluid rounded-circle shadow-sm"
-                                 style="width: 200px; height: 200px; object-fit: cover; border: 4px solid #f0f0f0;">
+
+                            <img src="{{ asset('storage/' . $customer->photo) }}" alt="Profile Photo"
+                                class="img-fluid rounded-circle shadow-sm"
+                                style="width: 200px; height: 200px; object-fit: cover; border: 4px solid #f0f0f0;">
                         @else
                             <div class="d-flex align-items-center justify-content-center rounded-circle bg-secondary text-white"
-                                 style="width: 200px; height: 200px;">
+                                style="width: 200px; height: 200px;">
                                 <span>No Photo</span>
                             </div>
                         @endif
                         <h5 class="mt-4 fw-semibold">{{ $customer->name }}</h5>
-                       
+
                     </div>
 
                     <!-- Customer Info -->
@@ -50,7 +49,17 @@
                             </div>
                             <div class="col-md-6">
                                 <h6 class="fw-bold mb-1">Gender</h6>
-                                <p class="text-muted mb-0">{{ $customer->gender }}</p>
+                                <p class="text-muted mb-0">
+                                    @if ($customer->gender == 1)
+                                        Male
+                                    @elseif ($customer->gender == 2)
+                                        Female
+                                    @elseif ($customer->gender == 3)
+                                        Other
+                                    @else
+                                        N/A
+                                    @endif
+                                </p>
                             </div>
                         </div>
                     </div>

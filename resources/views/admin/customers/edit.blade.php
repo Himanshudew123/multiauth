@@ -37,8 +37,9 @@
                 <label for="gender" class="form-label">Gender:</label>
                 <select name="gender" class="form-select" id="gender">
                     <option value="">Select Gender</option>
-                    <option value="Male" {{ $customer->gender === 'Male' ? 'selected' : '' }}>Male</option>
-                    <option value="Female" {{ $customer->gender === 'Female' ? 'selected' : '' }}>Female</option>
+                    <option value="1" {{ $customer->gender === 1 ? 'selected' : '' }}>Male</option>
+                    <option value="2" {{ $customer->gender === 2 ? 'selected' : '' }}>Female</option>
+                    <option value="3" {{ $customer->gender === 3 ? 'selected' : '' }}>Other</option>
                 </select>
                 <div id="genderError" class="text-danger small d-none">Gender is required.</div>
             </div>

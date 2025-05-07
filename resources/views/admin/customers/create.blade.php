@@ -42,8 +42,9 @@
                 <label for="gender" class="form-label">Gender:</label>
                 <select name="gender" class="form-select" id="gender">
                     <option value="">Select Gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
+                    <option value="1">Male</option>
+                    <option value="2">Female</option>
+                    <option value="3">Other</option>
                 </select>
                 <div id="genderError" class="text-danger small mt-1 d-none"></div>
             </div>

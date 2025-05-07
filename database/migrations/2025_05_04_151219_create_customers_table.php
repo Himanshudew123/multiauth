@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('password', 255);
             $table->string('bio', 255);
-            $table->string('gender', 30);
+            $table->unsignedTinyInteger('gender');
             $table->text('photo');
             $table->string('number', 15)->nullable();
             $table->timestamps();              // created_at and updated_at

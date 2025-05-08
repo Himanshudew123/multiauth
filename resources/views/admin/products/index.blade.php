@@ -14,7 +14,7 @@
         </div>
 
         <!-- Filter Form -->
-        <form method="POST" action="{{ route('admin.products.index') }}" class="row g-3 align-items-end mb-4">
+        <form method="POST" action="{{ route('admin.products.search') }}" class="row g-3 align-items-end mb-4">
             @csrf
             <div class="col-md-3">
                 <label for="name" class="form-label">Product Name</label>

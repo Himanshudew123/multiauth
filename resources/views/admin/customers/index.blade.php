@@ -14,7 +14,7 @@
         </div>
 
         <!-- Filter Form -->
-        <form method="POST" action="{{ route('admin.customers.index') }}" class="row g-3 align-items-end mb-4">
+        <form method="POST" action="{{ route('admin.customers.search') }}" class="row g-3 align-items-end mb-4">
             @csrf
             <!-- Name -->
             <div class="col-md-2">
@@ -67,7 +67,7 @@
                         <th>Serial No</th>
                         <th>Name</th>
                         <th>Email</th>
-                        <th>Phone</th>
+                        <th class="text-end">Phone</th>
                         <th>Gender</th>
                         <th>Created</th>
                         <th>Actions</th>
@@ -79,7 +79,7 @@
                             <td>{{ $customers->firstItem() + $index }}</td>
                             <td>{{ $customer->name }}</td>
                             <td>{{ $customer->email }}</td>
-                            <td>{{ $customer->number }}</td>
+                            <td class="text-end">{{ $customer->number }}</td>
                             <td>
                                 @php
                                     $genderMap = [1 => 'Male', 2 => 'Female', 3 => 'Other'];

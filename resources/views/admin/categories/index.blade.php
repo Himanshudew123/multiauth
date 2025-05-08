@@ -16,7 +16,7 @@
         @endif
 
         <div class="mb-3 d-flex justify-content-between align-items-center">
-            <form method="POST" action="{{ route('admin.categories.index') }}" class="row g-2 align-items-end">
+            <form method="POST" action="{{ route('admin.categories.search') }}" class="row g-2 align-items-end">
                 @csrf
 
                 <div class="col-3">

@@ -56,7 +56,7 @@ class CustomerController extends Controller
             $query->whereDate('created_at', '<=', $validated['end_date']);
         }
 
-        $customers = $query->latest()->paginate(5);
+        $customers = $query->latest()->paginate(10);
 
         return view('admin.customers.index', compact('customers','pageTitle'));
     }

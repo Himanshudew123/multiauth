@@ -27,7 +27,7 @@
                             <div class="d-flex align-items-center justify-content-center rounded-circle bg-secondary text-white"
                                 style="width: 200px; height: 200px;">
                                 <span>No Photo</span>
-                            </div>
+                            </div>  
                         @endif
                         <h5 class="mt-4 fw-semibold">{{ $customer->name }}</h5>
 

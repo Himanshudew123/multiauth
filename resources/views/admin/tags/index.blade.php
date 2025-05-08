@@ -16,7 +16,7 @@
         @endif
 
         <div class="mb-3 d-flex justify-content-between align-items-center">
-            <form method="POST" action="{{ route('admin.tags.index') }}" class="row g-2 align-items-end">
+            <form method="POST" action="{{ route('admin.tags.search') }}" class="row g-2 align-items-end">
                 @csrf
 
                 <div class="col-auto">

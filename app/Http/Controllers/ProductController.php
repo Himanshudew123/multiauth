@@ -258,5 +258,10 @@ class ProductController extends Controller
 
         return response()->stream($callback, 200, $headers);
     }
+    public function exportPdfView(Request $request)
+    {
+        $products = Product::all(); // Get all customer records
+        return view('admin.products.pdf', compact('products'));
+    }
 
 }

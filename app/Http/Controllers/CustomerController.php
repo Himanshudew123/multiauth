@@ -17,15 +17,15 @@ class CustomerController extends Controller
     {
         // Validate the inputs
         $validated = $request->validate([
-            'name'       => [
+            'name' => [
                 'nullable',
                 'string',
                 'min:3',
                 'regex:/^[A-Za-z\s]+$/'
             ],
-            'number'     => ['nullable', 'string'],
+            'number' => ['nullable', 'string'],
             'start_date' => ['nullable', 'date'],
-            'end_date'   => ['nullable', 'date'],
+            'end_date' => ['nullable', 'date'],
         ], [
             'name.regex' => 'The name may only contain letters and spaces.',
         ]);
@@ -78,8 +78,8 @@ class CustomerController extends Controller
             }
 
             $validator = Validator::make($data, [
-                'name'     => ['required', 'regex:/^[a-zA-Z\s]+$/'],
-                'email'    => ['required', 'email', 'unique:customers,email'],
+                'name' => ['required', 'regex:/^[a-zA-Z\s]+$/'],
+                'email' => ['required', 'email', 'unique:customers,email'],
                 'password' => [
                     'required',
                     'min:8',
@@ -88,16 +88,16 @@ class CustomerController extends Controller
                     'regex:/[0-9]/',
                     'regex:/[@$!%*?&]/',
                 ],
-                'number'   => ['required', 'digits_between:10,15', 'regex:/^[6-9]\d{9}$/'],
-                'gender'   => ['required', 'in:1,2,3'],
-                'bio'      => ['required', 'string'],
+                'number' => ['required', 'digits_between:10,15', 'regex:/^[6-9]\d{9}$/'],
+                'gender' => ['required', 'in:1,2,3'],
+                'bio' => ['required', 'string'],
             ]);
 
             if ($validator->fails()) {
                 return response()->json([
-                    'success'      => false,
+                    'success' => false,
                     'field_errors' => $validator->errors(),
-                    'message'      => 'Validation failed.',
+                    'message' => 'Validation failed.',
                 ], 422);
             }
 
@@ -113,13 +113,13 @@ class CustomerController extends Controller
             }
 
             Customer::create([
-                'name'     => $data['name'],
-                'email'    => $data['email'],
+                'name' => $data['name'],
+                'email' => $data['email'],
                 'password' => bcrypt($data['password']),
-                'number'   => $data['number'],
-                'gender'   => $data['gender'],
-                'bio'      => $data['bio'],
-                'photo'    => $photoPath,
+                'number' => $data['number'],
+                'gender' => $data['gender'],
+                'bio' => $data['bio'],
+                'photo' => $photoPath,
             ]);
 
             return response()->json(['success' => true, 'message' => 'Customer created successfully!']);
@@ -148,19 +148,19 @@ class CustomerController extends Controller
         $request->merge($data);
 
         $validator = Validator::make($data, [
-            'name'   => ['required', 'regex:/^[a-zA-Z\s]+$/'],
-            'email'  => ['required', 'email', 'unique:customers,email,' . Customer::where('uuid', $uuid)->firstOrFail()->id],
-            'password'=> ['nullable', 'min:8'],
+            'name' => ['required', 'regex:/^[a-zA-Z\s]+$/'],
+            'email' => ['required', 'email', 'unique:customers,email,' . Customer::where('uuid', $uuid)->firstOrFail()->id],
+            'password' => ['nullable', 'min:8'],
             'number' => ['required', 'digits_between:10,15'],
             'gender' => ['required', 'in:1,2,3'],
-            'bio'    => ['required', 'string'],
+            'bio' => ['required', 'string'],
         ]);
 
         if ($validator->fails()) {
             return response()->json([
-                'success'      => false,
+                'success' => false,
                 'field_errors' => $validator->errors(),
-                'message'      => 'Validation failed.',
+                'message' => 'Validation failed.',
             ], 422);
         }
 
@@ -184,13 +184,13 @@ class CustomerController extends Controller
 
         // Update record
         $customer->update([
-            'name'     => $data['name'],
-            'email'    => $data['email'],
+            'name' => $data['name'],
+            'email' => $data['email'],
             'password' => $password,
-            'number'   => $data['number'],
-            'gender'   => $data['gender'],
-            'bio'      => $data['bio'],
-            'photo'    => $photoPath,
+            'number' => $data['number'],
+            'gender' => $data['gender'],
+            'bio' => $data['bio'],
+            'photo' => $photoPath,
         ]);
 
         return response()->json(['success' => true, 'message' => 'Customer updated successfully!']);
@@ -199,51 +199,56 @@ class CustomerController extends Controller
     public function destroy(string $uuid)
     {
         $customer = Customer::where('uuid', $uuid)->firstOrFail();
-    
+
         if ($customer->photo) {
             Storage::disk('public')->delete($customer->photo);
         }
-    
+
         $customer->softDelete(); // Use custom soft delete logic
         return redirect()->back()->with('success', 'Customer deleted successfully!');
     }
 
     public function exportCSV()
-{
-    $fileName = 'customers_' . now()->format('Ymd_His') . '.csv';
+    {
+        $fileName = 'customers_' . now()->format('Ymd_His') . '.csv';
 
-    $customers = Customer::all(); // Get all customer records
+        $customers = Customer::all(); // Get all customer records
 
-    $headers = [
-        "Content-type" => "text/csv",
-        "Content-Disposition" => "attachment; filename={$fileName}",
-        "Pragma" => "no-cache",
-        "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-        "Expires" => "0"
-    ];
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename={$fileName}",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
 
-    $columns = ['Name', 'Email', 'Phone Number', 'Gender', 'Created At'];
+        $columns = ['Name', 'Email', 'Phone Number', 'Gender', 'Created At'];
 
-    $callback = function () use ($customers, $columns) {
-        $file = fopen('php://output', 'w');
-        fputcsv($file, $columns);
+        $callback = function () use ($customers, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
 
-        $genderMap = [1 => 'Male', 2 => 'Female', 3 => 'Other'];
+            $genderMap = [1 => 'Male', 2 => 'Female', 3 => 'Other'];
 
-        foreach ($customers as $customer) {
-            fputcsv($file, [
-                $customer->name,
-                $customer->email,
-                $customer->number,
-                $genderMap[$customer->gender] ?? 'N/A',
-                $customer->created_at->format('d-m-Y H:i:s'),
-            ]);
-        }
+            foreach ($customers as $customer) {
+                fputcsv($file, [
+                    $customer->name,
+                    $customer->email,
+                    $customer->number,
+                    $genderMap[$customer->gender] ?? 'N/A',
+                    $customer->created_at->format('d-m-Y H:i:s'),
+                ]);
+            }
 
-        fclose($file);
-    };
+            fclose($file);
+        };
 
-    return response()->stream($callback, 200, $headers);
-}
- 
+        return response()->stream($callback, 200, $headers);
+    }
+
+    public function exportPdfView(Request $request)
+    {
+        $customers = Customer::all(); // Get all customer records
+        return view('admin.customers.pdf', compact('customers'));
+    }
 }

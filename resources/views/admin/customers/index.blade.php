@@ -6,8 +6,10 @@
     <div class="container mt-2">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="">User List</h2>
-            <a href="{{ route('admin.customers.export.csv') }}" class="btn btn-outline-info"><i class="fa-solid fa-file-csv"></i> Download</a>
-
+            <div>
+            <a href="{{ route('admin.customers.export.csv') }}" class="btn btn-outline-info"><i class="fa-solid fa-file-csv"></i> Excel</a>
+            <a href="{{ route('admin.customers.pdf')}}" target="_blank" class="mx-2 btn btn-outline-danger"><i class="bi bi-file-earmark-pdf"></i>PDF</a>
+            </div>
         </div>
 
         <!-- Filter Form -->
@@ -122,7 +124,6 @@
                 {{ $customers->withQueryString()->links('pagination::bootstrap-4') }}
             </nav>
         </div>
-
 
 
 

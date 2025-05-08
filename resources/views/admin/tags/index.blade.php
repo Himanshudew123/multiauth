@@ -4,8 +4,10 @@
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4 mt-1">
             <h2 class="">Tag List</h2>
-            <a href="{{ route('admin.tags.export.csv') }}" class="btn btn-outline-info"><i class="fa-solid fa-file-csv"></i> Download</a>
-
+            <div>
+            <a href="{{ route('admin.tags.export.csv') }}" class="btn btn-outline-info"><i class="fa-solid fa-file-csv"></i> Excel</a>
+            <a href="{{ route('admin.tags.pdf')}}" target="_blank" class="mx-2 btn btn-outline-danger"><i class="bi bi-file-earmark-pdf"></i>PDF</a>
+            </div>
         </div>
 
         @if(session('success'))

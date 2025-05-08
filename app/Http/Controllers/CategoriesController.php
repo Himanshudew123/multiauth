@@ -135,4 +135,9 @@ class CategoriesController extends Controller
 
         return response()->stream($callback, 200, $headers);
     }
+    public function exportPdfView(Request $request)
+    {
+        $categories = Category::all(); // Get all customer records
+        return view('admin.categories.pdf', compact('categories'));
+    }
 }

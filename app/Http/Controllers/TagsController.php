@@ -124,4 +124,9 @@ class TagsController extends Controller
 
         return response()->stream($callback, 200, $headers);
     }
+    public function exportPdfView(Request $request)
+    {
+        $tags = Tag::all(); // Get all customer records
+        return view('admin.tags.pdf', compact('tags'));
+    }
 }

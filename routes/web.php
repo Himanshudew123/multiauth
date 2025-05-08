@@ -29,54 +29,56 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
 
     // Full CRUD routes for customers
-    Route::resource('customers', CustomerController::class);
     Route::post('/customers', [CustomerController::class,'index']);
-    Route::get('/customers/{customer}', [CustomerController::class,'show'])->name('customers.show');
-    Route::get('/customers/{customer}/edit', [CustomerController::class,'edit'])->name('customers.edit');
     Route::put('/customers/{customer}', [CustomerController::class,'update'])->name('customers.update');
     Route::delete('/customers/{customer}', [CustomerController::class,'destroy'])->name('customers.destroy');
     Route::get('/customers/create', [CustomerController::class,'create'])->name('customers.create');
     Route::post('/customers/store', [CustomerController::class,'store'])->name('customers.store');
     Route::get('/customers/export/csv', [CustomerController::class, 'exportCSV'])->name('customers.export.csv');
+    Route::get('/customers/pdf', [CustomerController::class, 'exportPdfView'])->name('customers.pdf');
+    Route::get('/customers/{customer}', [CustomerController::class,'show'])->name('customers.show');
+    Route::get('/customers/{customer}/edit', [CustomerController::class,'edit'])->name('customers.edit');
+    Route::resource('customers', CustomerController::class);
 
 
 
 
-
-
-
-    Route::resource('categories', CategoriesController::class);
-    Route::post('/categories', [CategoriesController::class, 'index']);
-    Route::get('/categories/{categories}/edit', [CategoriesController::class,'edit'])->name('categories.edit');
+    Route::post('/categories', [CategoriesController::class, 'index'])->name('categories.index');
     Route::put('/categories/{categories}', [CategoriesController::class,'update'])->name('categories.update');
     Route::delete('/categories/{categories}', [CategoriesController::class,'destroy'])->name('categories.destroy');
     Route::get('/categories/create', [CategoriesController::class,'create'])->name('categories.create');
     Route::post('/categories/store', [CategoriesController::class,'store'])->name('categories.store');
     Route::get('/categories/export/csv', [CategoriesController::class, 'exportCSV'])->name('categories.export.csv');
+    Route::get('/categories/pdf', [CategoriesController::class, 'exportPdfView'])->name('categories.pdf');
+    Route::get('/categories/{categories}/edit', [CategoriesController::class,'edit'])->name('categories.edit');
+    Route::resource('categories', CategoriesController::class);
 
 
     
-    Route::resource('tags', TagsController::class);
     Route::post('/tags', [TagsController::class, 'index']);
-    Route::get('/tags/{tags}/edit', [TagsController::class,'edit'])->name('tags.edit');
     Route::put('/tags/{tags}', [TagsController::class,'update'])->name('tags.update');
     Route::delete('/tags/{tags}', [TagsController::class,'destroy'])->name('tags.destroy');
     Route::get('/tags/create', [TagsController::class,'create'])->name('tags.create');
     Route::post('/tags/store', [TagsController::class,'store'])->name('tags.store');
-    Route::get('/tags/export/csv', [TagsController::class, 'exportCSV'])->name('tags.export.csv');
+    Route::get('/tags/pdf', [TagsController::class, 'exportPdfView'])->name('tags.pdf');
+    Route::get('/tags/export/csv', action: [TagsController::class, 'exportCSV'])->name('tags.export.csv');
+    Route::get('/tags/{tags}/edit', [TagsController::class,'edit'])->name('tags.edit');
+    Route::resource('tags', TagsController::class);
 
 
 
 
-    Route::resource('products', ProductController::class);
     Route::post('/products', [ProductController::class, 'index']);
-    Route::get('/products/{products}', [ProductController::class,'show'])->name('products.show');
-    Route::get('/products/{products}/edit', [ProductController::class,'edit'])->name('products.edit');
     Route::put('/products/{products}', [ProductController::class,'update'])->name('products.update');
     Route::delete('/products/{products}', [ProductController::class,'destroy'])->name('products.destroy');
     Route::get('/products/create', [ProductController::class,'create'])->name('products.create');
     Route::post('/products/store', [ProductController::class,'store'])->name('products.store');
     Route::get('/products/export/csv', [ProductController::class, 'exportCSV'])->name('products.export.csv');
+    Route::get('/products/pdf', [ProductController::class, 'exportPdfView'])->name('products.pdf');
+    Route::get('/products/{products}', [ProductController::class,'show'])->name('products.show');
+    Route::get('/products/{products}/edit', [ProductController::class,'edit'])->name('products.edit');
+    Route::resource('products', ProductController::class);
+
 
     
 });

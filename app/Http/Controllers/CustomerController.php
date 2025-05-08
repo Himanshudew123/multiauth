@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Customer;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Str;
+use Carbon\Carbon;
+;
 
 class CustomerController extends Controller
 {
@@ -205,15 +208,7 @@ class CustomerController extends Controller
         return redirect()->back()->with('success', 'Customer deleted successfully!');
     }
     
-    public function generatePDF()
-    {
-        // Fetch all customers
-        $customers = Customer::all();
-
-        // Load the view for the PDF with the customers data
-        $pdf = Pdf::loadView('admin.customers.pdf', compact('customers'));
-
-        // Download the PDF
-        return $pdf->download('customers_list.pdf');
-    }
+   
+   
+    
 }

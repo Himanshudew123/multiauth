@@ -49,13 +49,7 @@
 
 
 
-        <!-- Results Info -->
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <div>
-                <strong>Showing {{ $customers->firstItem() }} - {{ $customers->lastItem() }} of {{ $customers->total() }}
-                    users</strong>
-            </div>
-        </div>
+
 
         <!-- Table -->
         <div class="table-responsive">
@@ -109,12 +103,24 @@
         </div>
 
         <!-- Pagination -->
-        <div class="d-flex justify-content-center">
+
+
+
+    
+
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="mb-4">
+                <strong>Showing {{ $customers->firstItem() }} - {{ $customers->lastItem() }} of {{ $customers->total() }}
+                    users</strong>
+            </div>
             <nav>
                 {{ $customers->withQueryString()->links('pagination::bootstrap-4') }}
             </nav>
         </div>
-        <a href="{{ route('admin.customers.pdf') }}" class="btn btn-info">Download PDF</a>
+
+       
+
+
 
     </div>
 @endsection

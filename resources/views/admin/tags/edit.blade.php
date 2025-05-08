@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+<title>{{ $pageTitle }}</title>
 <div class="container">
     <h2 class="mb-4 mt-3">Edit Tag</h2>
 

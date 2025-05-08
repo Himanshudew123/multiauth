@@ -8,6 +8,7 @@ class TagsController extends Controller
 {
     public function index(Request $request)
     {
+        $pageTitle = 'Tags';
         // 1. Validate inputs
         $validated = $request->validate([
             'name'       => ['nullable','string','min:3','regex:/^[A-Za-z\s]+$/'],
@@ -40,13 +41,14 @@ class TagsController extends Controller
         // 5. Paginate
         $tags = $query->latest()->paginate(5);
     
-        return view('admin.tags.index', compact('tags'));
+        return view('admin.tags.index', compact('tags','pageTitle'));
     }
     
 
     public function create()
     {
-        return view('admin.tags.create');
+        $pageTitle = 'Tags | Create';
+        return view('admin.tags.create' ,compact('pageTitle'));
     }
 
     public function store(Request $request)
@@ -68,8 +70,9 @@ class TagsController extends Controller
 
     public function edit(string $uuid)
     {
+        $pageTitle = 'Tags | Update';
         $tag = Tag::where('uuid', $uuid)->firstOrFail();
-        return view('admin.tags.edit', compact('tag'));
+        return view('admin.tags.edit', compact('tag','pageTitle'));
     }
 
     public function update(Request $request, string $uuid)

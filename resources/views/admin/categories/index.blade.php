@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+<title>{{ $pageTitle }}</title>
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4 mt-1">
             <h2 class="">Category List</h2>

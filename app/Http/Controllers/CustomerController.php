@@ -6,15 +6,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Customer;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Str;
-use Carbon\Carbon;
+
 ;
 
 class CustomerController extends Controller
 {
     public function index(Request $request)
     {
+        $pageTitle = 'Customers';
         // Validate the inputs
         $validated = $request->validate([
             'name' => [
@@ -59,12 +58,14 @@ class CustomerController extends Controller
 
         $customers = $query->latest()->paginate(5);
 
-        return view('admin.customers.index', compact('customers'));
+        return view('admin.customers.index', compact('customers','pageTitle'));
     }
 
     public function create()
+
     {
-        return view('admin.customers.create');
+        $pageTitle = 'Customers | Create';
+        return view('admin.customers.create', compact('pageTitle'));
     }
 
     public function store(Request $request)
@@ -130,14 +131,17 @@ class CustomerController extends Controller
 
     public function show(string $uuid)
     {
+        $pageTitle = 'Customers | View';
         $customer = Customer::where('uuid', $uuid)->firstOrFail();
-        return view('admin.customers.show', compact('customer'));
+        return view('admin.customers.show', compact('customer','pageTitle'));
     }
 
     public function edit(string $uuid)
+
     {
+        $pageTitle = 'Customers | Update';
         $customer = Customer::where('uuid', $uuid)->firstOrFail();
-        return view('admin.customers.edit', compact('customer'));
+        return view('admin.customers.edit', compact('customer','pageTitle'));
     }
 
     public function update(Request $request, string $uuid)

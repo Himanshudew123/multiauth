@@ -14,7 +14,9 @@ use Illuminate\Support\Facades\Log;
 class ProductController extends Controller
 {
     public function index(Request $request)
+
     {
+        $pageTitle = 'Products';
         $validated = $request->validate([
             'name' => [
                 'nullable',
@@ -66,16 +68,17 @@ class ProductController extends Controller
         $categories = Category::all();
         $tags = Tag::all();
 
-        return view('admin.products.index', compact('products', 'categories', 'tags'));
+        return view('admin.products.index', compact('products', 'categories', 'tags','pageTitle'));
     }
 
 
     public function create()
     {
+        $pageTitle = 'Products | Create';
         $categories = Category::all();
         $tags = Tag::all();
 
-        return view('admin.products.create', compact('categories', 'tags'));
+        return view('admin.products.create', compact('categories', 'tags','pageTitle'));
     }
 
     public function store(Request $request)
@@ -136,17 +139,19 @@ class ProductController extends Controller
 
     public function show($uuid)
     {
+        $pageTitle = 'Products | View';
         $product = Product::with(['category', 'tags'])->where('uuid', $uuid)->firstOrFail();
-        return view('admin.products.show', compact('product'));
+        return view('admin.products.show', compact('product','pageTitle'));
     }
 
     public function edit($uuid)
     {
+        $pageTitle = 'Products | Update';
         $product = Product::with('tags')->where('uuid', $uuid)->firstOrFail();
         $categories = Category::all();
         $tags = Tag::all();
 
-        return view('admin.products.edit', compact('product', 'categories', 'tags'));
+        return view('admin.products.edit', compact('product', 'categories', 'tags','pageTitle'));
     }
 
     public function update(Request $request, $uuid)

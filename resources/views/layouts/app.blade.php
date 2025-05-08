@@ -2,7 +2,13 @@
   <html lang="en">
     <head>
       <meta charset="utf-8" />
-      <title>E-COME | Dashboard</title>
+      <title>E-COME | 
+      @isset($pageTitle)
+      {{ $pageTitle }}  
+      @else
+      Dashboard
+      @endisset
+    </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <meta name="title" content="Ecom|Admin" />
       <meta name="author" content="ColorlibHQ" />
@@ -103,7 +109,11 @@
       <div class="app-wrapper">
         @include('partials.header')
         @include('partials.sidebar')
+        
+        <div class="container">
+        @include('partials.breadcrumb')
         @yield('content')
+        </div>
         @include('partials.footer')
       </div>
 

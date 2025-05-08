@@ -3,6 +3,7 @@
 @section('title', 'Product Details')
 
 @section('content')
+<title>{{ $pageTitle }}</title>
     <div class="container-fluid mt-4">
         <div class="row justify-content-center">
             <div class="col-lg-10 col-md-12">

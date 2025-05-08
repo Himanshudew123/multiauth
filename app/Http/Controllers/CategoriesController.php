@@ -8,6 +8,7 @@ class CategoriesController extends Controller
 {
     public function index(Request $request)
     {
+        $pageTitle = 'Categories';
         // 1. Validate inputs: name (min 3, letters/spaces), dates
         $validated = $request->validate([
             'name'        => ['nullable','string','min:3','regex:/^[A-Za-z\s]+$/'],
@@ -39,13 +40,14 @@ class CategoriesController extends Controller
 
         // 5. Paginate and return
         $categories = $query->latest()->paginate(5);
-        return view('admin.categories.index', compact('categories'));
+        return view('admin.categories.index', compact('categories','pageTitle'));
     }
 
 
     public function create()
     {
-        return view('admin.categories.create');
+        $pageTitle ='Category | Create';
+        return view('admin.categories.create' , compact('pageTitle'));
     }
 
     public function store(Request $request)
@@ -80,8 +82,9 @@ class CategoriesController extends Controller
 
     public function edit(string $uuid)
     {
+        $pageTitle ='Category | Update';
         $category = Category::where('uuid', $uuid)->firstOrFail();
-        return view('admin.categories.edit', compact('category'));
+        return view('admin.categories.edit', compact('category','pageTitle'));
     }
 
     public function update(Request $request, string $uuid)

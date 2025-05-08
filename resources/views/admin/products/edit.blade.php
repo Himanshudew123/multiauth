@@ -3,6 +3,7 @@
 @section('title', 'Update Product')
 
 @section('content')
+<title>{{ $pageTitle }}</title>
 <div class="container mt-2">
     <h2 class="mb-3">Update Product</h2>
 

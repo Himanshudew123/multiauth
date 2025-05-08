@@ -3,6 +3,7 @@
 @section('title', 'Product List')
 
 @section('content')
+<title>{{ $pageTitle }}</title>
     <div class="container mt-2">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="">Product List</h2>

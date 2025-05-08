@@ -3,6 +3,7 @@
 @section('title', 'Create Customer')
 
 @section('content')
+<title>{{ $pageTitle }}</title>
 <div class="container mt-2">
     <h2 class="mb-3">Create New Customer</h2>
 
@@ -70,7 +71,7 @@
             <div class="col-12 d-flex justify-content-center mt-3 mb-3">
                 <button type="reset" class="btn btn-secondary me-2 col-1" onclick="clearErrors(); removePhoto();">Reset</button>
                 <button type="submit" class="btn btn-primary col-1">Create</button>
-                <a href="{{ route('admin.customers.index') }}" class="btn btn-secondary mx-2 col-2">Back to home</a>
+                <a href="{{ route('admin.customers.index') }}" class="btn btn-secondary mx-2 col-2">Back</a>
             </div>
         </div>
     </form>

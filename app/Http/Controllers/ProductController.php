@@ -14,60 +14,60 @@ use Illuminate\Support\Facades\Log;
 class ProductController extends Controller
 {
     public function index(Request $request)
-{
-    $validated = $request->validate([
-        'name' => [
-            'nullable',
-            'string',
-            'min:3',
-            'regex:/^[A-Za-z\s]+$/'
-        ],
-        'price_min' => ['nullable', 'numeric'],
-        'price_max' => ['nullable', 'numeric'],
-        'created_at_start' => ['nullable', 'date'],
-        'created_at_end' => ['nullable', 'date'],
-        'category_id' => ['nullable', 'exists:categories,id'],
-        'tag_ids' => ['nullable', 'array'],
-        'tag_ids.*' => ['exists:tags,id'],
-    ]);
-
-    $query = Product::with(['category', 'tags']);
-
-    if (!empty($validated['name'])) {
-        $query->where('name', 'like', '%' . $validated['name'] . '%');
-    }
-
-    if (!empty($validated['price_min'])) {
-        $query->where('price', '>=', $validated['price_min']);
-    }
-
-    if (!empty($validated['price_max'])) {
-        $query->where('price', '<=', $validated['price_max']);
-    }
-
-    if (!empty($validated['created_at_start']) && !empty($validated['created_at_end'])) {
-        $query->whereBetween('created_at', [
-            $validated['created_at_start'],
-            $validated['created_at_end']
+    {
+        $validated = $request->validate([
+            'name' => [
+                'nullable',
+                'string',
+                'min:3',
+                'regex:/^[A-Za-z\s]+$/'
+            ],
+            'price_min' => ['nullable', 'numeric'],
+            'price_max' => ['nullable', 'numeric'],
+            'created_at_start' => ['nullable', 'date'],
+            'created_at_end' => ['nullable', 'date'],
+            'category_id' => ['nullable', 'exists:categories,id'],
+            'tag_ids' => ['nullable', 'array'],
+            'tag_ids.*' => ['exists:tags,id'],
         ]);
+
+        $query = Product::with(['category', 'tags']);
+
+        if (!empty($validated['name'])) {
+            $query->where('name', 'like', '%' . $validated['name'] . '%');
+        }
+
+        if (!empty($validated['price_min'])) {
+            $query->where('price', '>=', $validated['price_min']);
+        }
+
+        if (!empty($validated['price_max'])) {
+            $query->where('price', '<=', $validated['price_max']);
+        }
+
+        if (!empty($validated['created_at_start']) && !empty($validated['created_at_end'])) {
+            $query->whereBetween('created_at', [
+                $validated['created_at_start'],
+                $validated['created_at_end']
+            ]);
+        }
+
+        if (!empty($validated['category_id'])) {
+            $query->where('category_id', $validated['category_id']);
+        }
+
+        if (!empty($validated['tag_ids'])) {
+            $query->whereHas('tags', function ($q) use ($validated) {
+                $q->whereIn('tags.id', $validated['tag_ids']);
+            });
+        }
+
+        $products = $query->orderByDesc('created_at')->paginate(5);
+        $categories = Category::all();
+        $tags = Tag::all();
+
+        return view('admin.products.index', compact('products', 'categories', 'tags'));
     }
-
-    if (!empty($validated['category_id'])) {
-        $query->where('category_id', $validated['category_id']);
-    }
-
-    if (!empty($validated['tag_ids'])) {
-        $query->whereHas('tags', function ($q) use ($validated) {
-            $q->whereIn('tags.id', $validated['tag_ids']);
-        });
-    }
-
-    $products = $query->orderByDesc('created_at')->paginate(5);
-    $categories = Category::all();
-    $tags = Tag::all();
-
-    return view('admin.products.index', compact('products', 'categories', 'tags'));
-}
 
 
     public function create()
@@ -89,11 +89,11 @@ class ProductController extends Controller
             }
 
             $validator = Validator::make($data, [
-                'name'        => ['required', 'regex:/^[\p{L}\s0-9\-.,]+$/u'],
-                'price'       => ['required', 'numeric', 'min:0'],
+                'name' => ['required', 'regex:/^[\p{L}\s0-9\-.,]+$/u'],
+                'price' => ['required', 'numeric', 'min:0'],
                 'category_id' => ['required', 'exists:categories,id'],
-                'tags'        => ['required', 'array'],
-                'tags.*'      => ['exists:tags,id']
+                'tags' => ['required', 'array'],
+                'tags.*' => ['exists:tags,id']
             ]);
 
             if ($validator->fails()) {
@@ -160,11 +160,11 @@ class ProductController extends Controller
             }
 
             $validator = Validator::make($data, [
-                'name'        => ['required', 'string', 'max:255', 'regex:/^[\p{L}\s0-9\-.,]+$/u'],
-                'price'       => ['required', 'numeric', 'min:0'],
+                'name' => ['required', 'string', 'max:255', 'regex:/^[\p{L}\s0-9\-.,]+$/u'],
+                'price' => ['required', 'numeric', 'min:0'],
                 'category_id' => ['nullable', 'exists:categories,id'],
-                'tags'        => ['nullable', 'array'],
-                'tags.*'      => ['exists:tags,id']
+                'tags' => ['nullable', 'array'],
+                'tags.*' => ['exists:tags,id']
             ]);
 
             if ($validator->fails()) {
@@ -214,13 +214,49 @@ class ProductController extends Controller
         }
     }
     public function destroy($uuid)
-{
-    $product = Product::where('uuid', $uuid)->firstOrFail();
+    {
+        $product = Product::where('uuid', $uuid)->firstOrFail();
 
-    // Call the overridden delete method to set 'is_deleted' to 1
-    $product->softDelete();
+        // Call the overridden delete method to set 'is_deleted' to 1
+        $product->softDelete();
 
-    return redirect()->back()->with('success', 'Customer deleted successfully!');
-}
+        return redirect()->back()->with('success', 'Customer deleted successfully!');
+    }
+    public function exportCSV()
+    {
+        $fileName = 'products_' . now()->format('Ymd_His') . '.csv';
+
+        $products = Product::all(); // Get all customer records
+
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename={$fileName}",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
+
+        $columns = ['Name','Price','Category','Created At'];
+
+        $callback = function () use ($products, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            
+
+            foreach ($products as $product) {
+                fputcsv($file, [
+                    $product->name,
+                    $product->price,
+                    $product->category->name,
+                    $product->created_at->format('d-m-Y'),
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
 
 }

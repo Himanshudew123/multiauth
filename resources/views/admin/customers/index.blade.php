@@ -4,7 +4,11 @@
 
 @section('content')
     <div class="container mt-2">
-        <h2 class="mb-4">User List</h2>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="">User List</h2>
+            <a href="{{ route('admin.customers.export.csv') }}" class="btn btn-outline-info"><i class="fa-solid fa-file-csv"></i> Download</a>
+
+        </div>
 
         <!-- Filter Form -->
         <form method="POST" action="{{ route('admin.customers.index') }}" class="row g-3 align-items-end mb-4">
@@ -44,6 +48,7 @@
                 <button type="submit" class="btn btn-primary w-100">Search</button>
                 <a href="{{ route('admin.customers.index') }}" class="btn btn-secondary w-100">Reset</a>
                 <a href="{{ route('admin.customers.create') }}" class="btn btn-success w-100">Create</a>
+
             </div>
         </form>
 
@@ -106,7 +111,7 @@
 
 
 
-    
+
 
         <div class="d-flex justify-content-between align-items-center">
             <div class="mb-4">
@@ -118,7 +123,7 @@
             </nav>
         </div>
 
-       
+
 
 
 

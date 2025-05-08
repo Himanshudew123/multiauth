@@ -2,7 +2,11 @@
 
 @section('content')
     <div class="container">
-        <h2 class="mb-3 mt-2">Category List</h2>
+        <div class="d-flex justify-content-between align-items-center mb-4 mt-1">
+            <h2 class="">Category List</h2>
+            <a href="{{ route('admin.categories.export.csv') }}" class="btn btn-outline-info"><i class="fa-solid fa-file-csv"></i> Download</a>
+
+        </div>
 
         @if(session('success'))
             <div class="alert alert-success">{{ session('success') }}</div>
@@ -43,7 +47,8 @@
                     <a href="{{ route('admin.categories.index') }}" class="btn btn-secondary">Reset</a>
                 </div>
             </form>
-            <a href="{{ route('admin.categories.create') }}" class="btn btn-success mt-4"><i class="fa-solid fa-plus"></i> Create
+            <a href="{{ route('admin.categories.create') }}" class="btn btn-success mt-4"><i class="fa-solid fa-plus"></i>
+                Create
                 Category</a>
         </div>
 

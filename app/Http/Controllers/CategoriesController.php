@@ -101,4 +101,38 @@ class CategoriesController extends Controller
 
         return redirect()->back()->with('success', 'Category deleted successfully!');
     }
+    public function exportCSV()
+    {
+        $fileName = 'categories_' . now()->format('Ymd_His') . '.csv';
+
+        $categories = Category::all(); // Get all customer records
+
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename={$fileName}",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
+
+        $columns = ['Name','Created At'];
+
+        $callback = function () use ($categories, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+           
+
+            foreach ($categories as $category) {
+                fputcsv($file, [
+                    $category->name,                   
+                    $category->created_at->format('d-m-Y'),
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
 }

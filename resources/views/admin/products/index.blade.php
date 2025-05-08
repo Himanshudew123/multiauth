@@ -4,7 +4,11 @@
 
 @section('content')
     <div class="container mt-2">
-        <h2 class="mb-4">Product List</h2>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="">Product List</h2>
+            <a href="{{ route('admin.products.export.csv') }}" class="btn btn-outline-info"><i class="fa-solid fa-file-csv"></i> Download</a>
+
+        </div>
 
         <!-- Filter Form -->
         <form method="POST" action="{{ route('admin.products.index') }}" class="row g-3 align-items-end mb-4">
@@ -109,7 +113,7 @@
 
         <div class="d-flex justify-content-between align-items-center">
             <div class="col-md-6 text-start">
-            <strong>
+                <strong>
                     Showing {{ $products->firstItem() }} to {{ $products->lastItem() }} of {{ $products->total() }} results
                 </strong>
             </div>

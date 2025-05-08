@@ -37,6 +37,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::delete('/customers/{customer}', [CustomerController::class,'destroy'])->name('customers.destroy');
     Route::get('/customers/create', [CustomerController::class,'create'])->name('customers.create');
     Route::post('/customers/store', [CustomerController::class,'store'])->name('customers.store');
+    Route::get('/customers/export/csv', [CustomerController::class, 'exportCSV'])->name('customers.export.csv');
 
 
 
@@ -51,6 +52,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::delete('/categories/{categories}', [CategoriesController::class,'destroy'])->name('categories.destroy');
     Route::get('/categories/create', [CategoriesController::class,'create'])->name('categories.create');
     Route::post('/categories/store', [CategoriesController::class,'store'])->name('categories.store');
+    Route::get('/categories/export/csv', [CategoriesController::class, 'exportCSV'])->name('categories.export.csv');
 
 
     
@@ -61,7 +63,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::delete('/tags/{tags}', [TagsController::class,'destroy'])->name('tags.destroy');
     Route::get('/tags/create', [TagsController::class,'create'])->name('tags.create');
     Route::post('/tags/store', [TagsController::class,'store'])->name('tags.store');
-    
+    Route::get('/tags/export/csv', [TagsController::class, 'exportCSV'])->name('tags.export.csv');
+
+
+
+
     Route::resource('products', ProductController::class);
     Route::post('/products', [ProductController::class, 'index']);
     Route::get('/products/{products}', [ProductController::class,'show'])->name('products.show');
@@ -70,6 +76,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::delete('/products/{products}', [ProductController::class,'destroy'])->name('products.destroy');
     Route::get('/products/create', [ProductController::class,'create'])->name('products.create');
     Route::post('/products/store', [ProductController::class,'store'])->name('products.store');
-    
+    Route::get('/products/export/csv', [ProductController::class, 'exportCSV'])->name('products.export.csv');
+
     
 });

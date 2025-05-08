@@ -2,7 +2,11 @@
 
 @section('content')
     <div class="container">
-        <h2 class="mb-2 mt-2">Tag List</h2>
+        <div class="d-flex justify-content-between align-items-center mb-4 mt-1">
+            <h2 class="">Tag List</h2>
+            <a href="{{ route('admin.tags.export.csv') }}" class="btn btn-outline-info"><i class="fa-solid fa-file-csv"></i> Download</a>
+
+        </div>
 
         @if(session('success'))
             <div class="alert alert-success">{{ session('success') }}</div>

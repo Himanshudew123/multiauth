@@ -207,8 +207,43 @@ class CustomerController extends Controller
         $customer->softDelete(); // Use custom soft delete logic
         return redirect()->back()->with('success', 'Customer deleted successfully!');
     }
-    
-   
-   
-    
+
+    public function exportCSV()
+{
+    $fileName = 'customers_' . now()->format('Ymd_His') . '.csv';
+
+    $customers = Customer::all(); // Get all customer records
+
+    $headers = [
+        "Content-type" => "text/csv",
+        "Content-Disposition" => "attachment; filename={$fileName}",
+        "Pragma" => "no-cache",
+        "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+        "Expires" => "0"
+    ];
+
+    $columns = ['Name', 'Email', 'Phone Number', 'Gender', 'Created At'];
+
+    $callback = function () use ($customers, $columns) {
+        $file = fopen('php://output', 'w');
+        fputcsv($file, $columns);
+
+        $genderMap = [1 => 'Male', 2 => 'Female', 3 => 'Other'];
+
+        foreach ($customers as $customer) {
+            fputcsv($file, [
+                $customer->name,
+                $customer->email,
+                $customer->number,
+                $genderMap[$customer->gender] ?? 'N/A',
+                $customer->created_at->format('d-m-Y H:i:s'),
+            ]);
+        }
+
+        fclose($file);
+    };
+
+    return response()->stream($callback, 200, $headers);
+}
+ 
 }

@@ -89,4 +89,39 @@ class TagsController extends Controller
 
         return redirect()->back()->with('success', 'Tag deleted successfully!');
     }
+
+
+    public function exportCSV()
+    {
+        $fileName = 'tags_' . now()->format('Ymd_His') . '.csv';
+
+        $tags = Tag::all(); // Get all customer records
+
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename={$fileName}",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
+
+        $columns = ['Name','Created At'];
+
+        $callback = function () use ($tags, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+
+            foreach ($tags as $tag) {
+                fputcsv($file, [
+                    $tag->name,
+                    $tag->created_at->format('d-m-Y'),
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
 }
